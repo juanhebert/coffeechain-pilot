@@ -1,0 +1,25 @@
+{
+    "extends": [
+        "prettier",
+        "airbnb",
+        "plugin:jsx-a11y/recommended",
+        "prettier",
+        "prettier/react"
+    ],
+    "plugins": [
+        "prettier",
+        "jsx-a11y"
+    ],
+    "rules": {
+        "prettier/prettier": [
+            "error"
+        ]
+    },
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020
+    }
+}
