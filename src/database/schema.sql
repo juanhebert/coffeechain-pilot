@@ -8,10 +8,8 @@ drop table if exists
     transformation_output,
     shipment,
     shipment_input,
-    shipment_output,
     sale,
     sale_input,
-    sale_output,
     certificate,
     practice,
     attachment
@@ -21,7 +19,7 @@ create table actor(
     id text primary key,
     name text not null,
     location text not null,
-    picture text not null,
+    picture text, -- TODO: should this be here?
     type text not null
 );
 
@@ -60,11 +58,6 @@ create table shipment_input(
     product text not null references product(id)
 );
 
-create table shipment_output(
-    shipment text not null references shipment(id),
-    product text not null references product(id)
-);
-
 create table sale(
     id text primary key,
     seller text not null references actor(id),
@@ -75,11 +68,6 @@ create table sale(
 );
 
 create table sale_input(
-    sale text not null references sale(id),
-    product text not null references product(id)
-);
-
-create table sale_output(
     sale text not null references sale(id),
     product text not null references product(id)
 );
