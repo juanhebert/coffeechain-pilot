@@ -2,27 +2,17 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
-const humps = require('humps');
+// const humps = require('humps');
+const pgp = require('pg-promise')({});
+const {
+  getActors,
+  getActorCertificates,
+  getActorInventory,
+  getActorOwnership,
+  getActorPractices,
+} = require('./database/queries');
 
-const options = {
-  receive: data => {
-    const template = data[0];
-    template.forEach(prop => {
-      const camel = humps.camelize(prop);
-      if (!(camel in template)) {
-        for (let i = 0; i < data.length; i += 1) {
-          const d = data[i];
-          d[camel] = d[prop];
-          delete d[prop];
-        }
-      }
-    });
-  },
-};
-
-const pgp = require('pg-promise')(options);
-
-const cn = process.env.DATABASE_URL || 'postgres://coffeebrain:coffeebrain-local@localhost:5432/coffeebrain';
+const cn = process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain';
 const db = pgp(cn);
 
 const app = express();
@@ -33,6 +23,31 @@ app.use('/img', express.static(path.join(__dirname, '..', 'img')));
 
 app.get('/api', (req, res) => {
   res.send('OK');
+});
+
+app.get('/api/actor', async (req, res) => {
+  res.send({ actors: await db.any(getActors) });
+});
+
+app.get('/api/certificates/:actor', async (req, res) => {
+  const { actor } = req.params;
+  const now = new Date().toISOString();
+  res.send({ items: await db.any(getActorCertificates, [actor, now]) });
+});
+
+app.get('/api/inventory/:actor', async (req, res) => {
+  const { actor } = req.params;
+  res.send({ items: await db.any(getActorInventory, [actor]) });
+});
+
+app.get('/api/ownership/:actor', async (req, res) => {
+  const { actor } = req.params;
+  res.send({ items: await db.any(getActorOwnership, [actor]) });
+});
+
+app.get('/api/practices/:actor', async (req, res) => {
+  const { actor } = req.params;
+  res.send({ items: await db.any(getActorPractices, [actor]) });
 });
 
 if (process.env.NODE_ENV === 'production') {
