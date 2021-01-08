@@ -1,2 +1,2 @@
 insert into transformation_input(transformation, product)
-value ($1, $2);
+values ($1, $2);

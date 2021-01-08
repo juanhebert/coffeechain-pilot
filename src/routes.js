@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
+const short = require('short-uuid');
 // const humps = require('humps');
 const pgp = require('pg-promise')({});
 const {
@@ -21,6 +22,7 @@ const {
   newCertificate,
   newPractice,
   newAttachment,
+  newActor,
 } = require('./database/queries');
 
 const cn = process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain';
@@ -59,6 +61,13 @@ app.get('/api/ownership/:actor', async (req, res) => {
 app.get('/api/practices/:actor', async (req, res) => {
   const { actor } = req.params;
   res.send({ items: await db.any(getActorPractices, [actor]) });
+});
+
+app.post('/api/actor', async (req, res) => {
+  const { name, location, picture, type } = req.body;
+  const id = short.generate();
+  await db.none(newActor, [id, name, location, picture, type]);
+  res.send('OK');
 });
 
 app.post('/api/transform', async (req, res) => {
@@ -119,3 +128,6 @@ if (process.env.NODE_ENV === 'production') {
 
 // eslint-disable-next-line no-console
 app.listen(8080, () => console.log('Listening on port 8080'));
+
+// For testing
+module.exports = app;

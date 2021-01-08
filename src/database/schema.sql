@@ -26,7 +26,7 @@ create table actor(
 create table product(
     id text primary key,
     weight integer not null,
-    type text not null, -- one of CHERRIES, WET_PARCHMENT, DRY_PARCHMENT, GREEN, ROASTED, WEIGHT LOSS
+    type text not null, -- one of CHERRIES, WET_PARCHMENT, DRY_PARCHMENT, GREEN, ROASTED, WEIGHT_LOSS
     variety text -- Only set for "original" products, one of CATURRA, CENICAFE, CASTILLO, etc.
 );
 

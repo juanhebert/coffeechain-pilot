@@ -6,8 +6,11 @@ join transformation t
 on t.id = t_out.transformation
 left join shipment_input si
 on si.product = p.id
-where si.shipment is null
+left join transformation_input ti
+on ti.product = p.id
+where si.shipment is null and ti.transformation is null
 and t.emitter = $1
+and p.type != 'WEIGHT_LOSS'
 
 union
 
@@ -22,5 +25,6 @@ left join
     from shipment s_sub
     join shipment_input si_sub
     on s_sub.id = si_sub.shipment) s_out
-on s_out.product = p.id and s_out.timestamp >= s.timestamp
-where s_out.timestamp is null;
+on s_out.product = p.id and s_out.timestamp > s.timestamp
+where s_out.timestamp is null
+and p.type != 'WEIGHT_LOSS';
