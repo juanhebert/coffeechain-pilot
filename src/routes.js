@@ -3,7 +3,6 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const short = require('short-uuid');
-// const humps = require('humps');
 const pgp = require('pg-promise')({});
 const {
   getActors,
