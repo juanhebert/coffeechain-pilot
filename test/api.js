@@ -182,4 +182,50 @@ describe('API tests', () => {
     expect(cooperativeOwnership).to.have.length(2);
     expect(cooperativeOwnership.map(({ id }) => id)).to.have.members(['derived-product1', 'derived-product2']);
   });
+
+  it('should be able to certify an actor', async () => {
+    const [farmer, certifier] = dbActors;
+
+    const res = await chai.request(server).post('/api/certificate').send({
+      emitter: certifier,
+      receiver: farmer,
+      type: 'FLO',
+      beginning: '2021-01-01',
+      expiration: '2022-01-01',
+    });
+    expect(res).to.have.status(200);
+
+    const certificateRes = await chai.request(server).get(`/api/certificates/${farmer}`);
+    const { items: certificates } = certificateRes.body;
+    expect(certificates).to.have.length(1);
+    expect(certificates[0].type).to.equal('FLO');
+  });
+
+  it('should be able to record a sustanability practice', async () => {
+    const [farmer, certifier] = dbActors;
+
+    const res = await chai.request(server).post('/api/practice').send({
+      emitter: certifier,
+      receiver: farmer,
+      type: 'WTS',
+      timestamp: '2021-01-01',
+    });
+    expect(res).to.have.status(200);
+
+    const practiceRes = await chai.request(server).get(`/api/practices/${farmer}`);
+    const { items: practices } = practiceRes.body;
+    expect(practices).to.have.length(1);
+    expect(practices[0].type).to.equal('WTS');
+  });
+
+  // TODO: data validation tests (do in TDD fashion)
+  //   - transformation weight in = weight out
+  //   - only unspent, existing inputs
+  //   - all outputs are new products
+  //   - only farmer if no inputs
+  //   - can only sell/send if already owns/has
+  //   - can only transform if has
+  //   - certification period: beginning < expiration
+
+  // TODO: evidence framework tests
 });
