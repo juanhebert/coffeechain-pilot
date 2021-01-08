@@ -51,7 +51,7 @@ app.get('/api/certificates/:actor', async (req, res) => {
   }
 
   const now = new Date().toISOString();
-  res.send({ items: await db.any(getActorCertificates, [actor, now]) });
+  return res.send({ items: await db.any(getActorCertificates, [actor, now]) });
 });
 
 app.get('/api/inventory/:actor', async (req, res) => {
@@ -63,7 +63,7 @@ app.get('/api/inventory/:actor', async (req, res) => {
     return res.status(400).send({ error: 'Actor not found' });
   }
 
-  res.send({ items: await db.any(getActorInventory, [actor]) });
+  return res.send({ items: await db.any(getActorInventory, [actor]) });
 });
 
 app.get('/api/ownership/:actor', async (req, res) => {
@@ -75,7 +75,7 @@ app.get('/api/ownership/:actor', async (req, res) => {
     return res.status(400).send({ error: 'Actor not found' });
   }
 
-  res.send({ items: await db.any(getActorOwnership, [actor]) });
+  return res.send({ items: await db.any(getActorOwnership, [actor]) });
 });
 
 app.get('/api/practices/:actor', async (req, res) => {
@@ -87,7 +87,7 @@ app.get('/api/practices/:actor', async (req, res) => {
     return res.status(400).send({ error: 'Actor not found' });
   }
 
-  res.send({ items: await db.any(getActorPractices, [actor]) });
+  return res.send({ items: await db.any(getActorPractices, [actor]) });
 });
 
 app.post('/api/actor', async (req, res) => {
@@ -227,7 +227,7 @@ app.post('/api/certificate', async (req, res) => {
   }
 
   await db.none(newCertificate, [emitter, receiver, type, beginning, expiration]);
-  res.send('OK');
+  return res.send('OK');
 });
 
 app.post('/api/practice', async (req, res) => {
@@ -246,14 +246,14 @@ app.post('/api/practice', async (req, res) => {
   }
 
   await db.none(newPractice, [emitter, receiver, type, timestamp]);
-  res.send('OK');
+  return res.send('OK');
 });
 
 app.post('/api/textAttachment', async (req, res) => {
   const { eventId, eventType, content, emitter } = req.body;
   // TODO: generate id, add timestamp to database schema for attachments
   await db.none(newAttachment, ['id', eventId, eventType, 'TEXT', content, emitter]);
-  res.send('OK');
+  return res.send('OK');
 });
 
 if (process.env.NODE_ENV === 'production') {
