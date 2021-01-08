@@ -44,22 +44,50 @@ app.get('/api/actor', async (req, res) => {
 
 app.get('/api/certificates/:actor', async (req, res) => {
   const { actor } = req.params;
+
+  try {
+    await db.one('select type from actor where id = $1', [actor]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Actor not found' });
+  }
+
   const now = new Date().toISOString();
   res.send({ items: await db.any(getActorCertificates, [actor, now]) });
 });
 
 app.get('/api/inventory/:actor', async (req, res) => {
   const { actor } = req.params;
+
+  try {
+    await db.one('select type from actor where id = $1', [actor]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Actor not found' });
+  }
+
   res.send({ items: await db.any(getActorInventory, [actor]) });
 });
 
 app.get('/api/ownership/:actor', async (req, res) => {
   const { actor } = req.params;
+
+  try {
+    await db.one('select type from actor where id = $1', [actor]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Actor not found' });
+  }
+
   res.send({ items: await db.any(getActorOwnership, [actor]) });
 });
 
 app.get('/api/practices/:actor', async (req, res) => {
   const { actor } = req.params;
+
+  try {
+    await db.one('select type from actor where id = $1', [actor]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Actor not found' });
+  }
+
   res.send({ items: await db.any(getActorPractices, [actor]) });
 });
 
@@ -67,12 +95,56 @@ app.post('/api/actor', async (req, res) => {
   const { name, location, picture, type } = req.body;
   const id = short.generate();
   await db.none(newActor, [id, name, location, picture, type]);
-  res.send('OK');
+  return res.send('OK');
 });
 
 app.post('/api/transform', async (req, res) => {
   const { emitter, inputs, outputs, timestamp } = req.body;
-  const id = timestamp; // TODO: generate randomly
+  const id = short.generate();
+
+  let fullEmitter;
+  try {
+    fullEmitter = await db.one('select type from actor where id = $1', [emitter]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Emitter not found' });
+  }
+
+  if (inputs.length === 0 && fullEmitter.type !== 'FARMER') {
+    return res.status(400).send({ error: 'Only farmers can create new products' });
+  }
+
+  let fullInputs;
+  try {
+    fullInputs = await Promise.all(
+      inputs.map(async ({ productId }) => db.one('select * from product where id = $1', [productId])),
+    );
+  } catch (e) {
+    return res.status(400).send({ error: 'Cannot consume a product that does not exist' });
+  }
+
+  const inWeight = fullInputs.reduce((previous, current) => previous + current.weight, 0);
+  const outWeight = outputs.reduce((previous, current) => previous + current.weight, 0);
+  if (inputs.length > 0 && inWeight !== outWeight) {
+    return res.status(400).send({ error: 'The cumulative weights of the inputs and outputs must be equal' });
+  }
+
+  if (fullInputs.some(({ type }) => type === 'WEIGHT_LOSS')) {
+    return res.status(400).send({ error: 'Cannot consume a product of the weight loss type' });
+  }
+
+  try {
+    await Promise.all(
+      outputs.map(async ({ productId }) => db.none('select * from product where id = $1', [productId])),
+    );
+  } catch (e) {
+    return res.status(400).send({ error: 'Cannot use existing ids for new products' });
+  }
+
+  const emitterInventory = (await db.any(getActorInventory, [emitter])).map(({ id: productId }) => productId);
+  if (inputs.some(({ productId }) => !emitterInventory.includes(productId))) {
+    return res.status(400).send({ error: 'Cannot consume input not in inventory' });
+  }
+
   await db.none(newTransformation, [id, emitter, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newTransformationInput, [id, productId])));
   await Promise.all(
@@ -81,33 +153,99 @@ app.post('/api/transform', async (req, res) => {
       await db.none(newTransformationOutput, [id, productId]);
     }),
   );
-  res.send('OK');
+  return res.send('OK');
 });
 
 app.post('/api/ship', async (req, res) => {
   const { sender, recipient, inputs, timestamp } = req.body;
-  const id = timestamp;
+  const id = short.generate();
+
+  try {
+    await db.one('select type from actor where id = $1', [sender]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Sender not found' });
+  }
+
+  try {
+    await db.one('select type from actor where id = $1', [recipient]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Recipient not found' });
+  }
+
+  const senderInventory = (await db.any(getActorInventory, [sender])).map(({ id: productId }) => productId);
+  if (inputs.some(({ productId }) => !senderInventory.includes(productId))) {
+    return res.status(400).send({ error: 'Cannot ship product not in inventory' });
+  }
+
   await db.none(newShipment, [id, sender, recipient, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newShipmentInput, [id, productId])));
-  res.send('OK');
+  return res.send('OK');
 });
 
 app.post('/api/sell', async (req, res) => {
   const { seller, buyer, inputs, price, currency, timestamp } = req.body;
-  const id = timestamp;
+  const id = short.generate();
+
+  try {
+    await db.one('select type from actor where id = $1', [seller]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Seller not found' });
+  }
+
+  try {
+    await db.one('select type from actor where id = $1', [buyer]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Buyer not found' });
+  }
+
+  const sellerOwnership = (await db.any(getActorOwnership, [seller])).map(({ id: productId }) => productId);
+  if (inputs.some(({ productId }) => !sellerOwnership.includes(productId))) {
+    return res.status(400).send({ error: 'Cannot sell product not in ownership' });
+  }
+
   await db.none(newSale, [id, seller, buyer, price, currency, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newSaleInput, [id, productId])));
-  res.send('OK');
+  return res.send('OK');
 });
 
 app.post('/api/certificate', async (req, res) => {
   const { emitter, receiver, type, beginning, expiration } = req.body;
+
+  try {
+    await db.one('select type from actor where id = $1', [emitter]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Emitter not found' });
+  }
+
+  try {
+    await db.one('select type from actor where id = $1', [receiver]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Receiver not found' });
+  }
+
+  if (new Date(beginning) >= new Date(expiration)) {
+    return res.status(400).send({ error: 'Invalid date range' });
+  }
+
   await db.none(newCertificate, [emitter, receiver, type, beginning, expiration]);
   res.send('OK');
 });
 
 app.post('/api/practice', async (req, res) => {
   const { emitter, receiver, type, timestamp } = req.body;
+
+  try {
+    await db.one('select type from actor where id = $1', [emitter]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Emitter not found' });
+  }
+
+  try {
+    await db.one('select type from actor where id = $1', [receiver]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Receiver not found' });
+  }
+
   await db.none(newPractice, [emitter, receiver, type, timestamp]);
   res.send('OK');
 });

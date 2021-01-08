@@ -13,17 +13,37 @@ const { expect } = chai;
 
 chai.use(chaiHttp);
 
-describe('API tests', () => {
+describe('The API', () => {
   before(() => db.none(resetSchema));
 
   let dbActors;
 
   it('should be able to add actors to the database', async () => {
     const actors = [
-      { name: 'Claire', location: 'Bordeaux', picture: null, type: 'FARMER' },
-      { name: 'Pierre', location: 'Strasbourg', picture: null, type: 'FARMER' },
-      { name: 'Jean', location: 'Paris', picture: null, type: 'FARMER' },
-      { name: 'Huguette', location: 'Marseille', picture: null, type: 'FARMER' },
+      {
+        name: 'Ernesto Cárdenas',
+        location: 'Titiribí, Colombia',
+        picture: null,
+        type: 'FARMER',
+      },
+      {
+        name: 'Cooperativa de Caficultores de Antioquia',
+        location: 'Medellín, Colombia',
+        picture: null,
+        type: 'COOPERATIVE',
+      },
+      {
+        name: 'Almacafé',
+        location: 'Medellín, Colombia',
+        picture: null,
+        type: 'DRY_MILL',
+      },
+      {
+        name: 'Löfberg',
+        location: 'Karlstad, Sweden',
+        picture: null,
+        type: 'ROASTER',
+      },
     ];
 
     return Promise.all(
@@ -218,14 +238,160 @@ describe('API tests', () => {
     expect(practices[0].type).to.equal('WTS');
   });
 
-  // TODO: data validation tests (do in TDD fashion)
-  //   - transformation weight in = weight out
-  //   - only unspent, existing inputs
-  //   - all outputs are new products
-  //   - only farmer if no inputs
-  //   - can only sell/send if already owns/has
-  //   - can only transform if has
-  //   - certification period: beginning < expiration
+  it('should only let farmers create new products', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [],
+        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Only farmers can create new products');
+  });
+
+  it('should reject transformations when the in and out weight do not match', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [{ productId: 'derived-product2' }],
+        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('The cumulative weights of the inputs and outputs must be equal');
+  });
+
+  it('should reject transformations that consume a weight loss input', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [{ productId: 'weight-loss1' }],
+        outputs: [{ productId: 'test', weight: 50000, type: 'PARCHMENT' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot consume a product of the weight loss type');
+  });
+
+  it('should reject transformations that consume an unexisting input', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [{ productId: 'i-do-not-exist' }],
+        outputs: [{ productId: 'test', weight: 50000, type: 'PARCHMENT' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot consume a product that does not exist');
+  });
+
+  it('should reject transformations that use existing product ids for their outputs', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [{ productId: 'derived-product2' }],
+        outputs: [{ productId: 'derived-product1', weight: 25000, type: 'ROASTED' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot use existing ids for new products');
+  });
+
+  it('should reject transformations that consume inputs the actor does not have', async () => {
+    const farmer = dbActors[0];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [{ productId: 'derived-product2' }],
+        outputs: [{ productId: 'derived-product3', weight: 25000, type: 'ROASTED' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot consume input not in inventory');
+  });
+
+  // By definition, covers also inputs that do not exist at all
+  it("should reject shipment of products not in the sender's inventory", async () => {
+    const [farmer, cooperative] = dbActors;
+
+    const res = await chai
+      .request(server)
+      .post('/api/ship')
+      .send({
+        sender: farmer,
+        recipient: cooperative,
+        inputs: [{ productId: 'derived-product2' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot ship product not in inventory');
+  });
+
+  // By definition, covers also inputs that do not exist at all
+  it("should reject sale of products not in the seller's ownership", async () => {
+    const [farmer, cooperative] = dbActors;
+
+    const res = await chai
+      .request(server)
+      .post('/api/sell')
+      .send({
+        seller: farmer,
+        buyer: cooperative,
+        inputs: [{ productId: 'derived-product2' }],
+        price: 2000,
+        currency: 'COP',
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot sell product not in ownership');
+  });
+
+  it('should reject empty certification validity intervals', async () => {
+    const [farmer, certifier] = dbActors;
+
+    const res = await chai.request(server).post('/api/certificate').send({
+      emitter: certifier,
+      receiver: farmer,
+      type: 'FLO',
+      beginning: '2022-01-01',
+      expiration: '2021-01-01',
+    });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Invalid date range');
+  });
 
   // TODO: evidence framework tests
 });
