@@ -72,8 +72,8 @@ describe('The API', () => {
         emitter: farmer,
         inputs: [],
         outputs: [
-          { productId: 'initial-product1', weight: 50000, type: 'GREEN' },
-          { productId: 'initial-product2', weight: 50000, type: 'GREEN' },
+          { productId: 'initial-product1', weight: 50000, type: 'DRY_PARCHMENT', variety: 'CASTILLO' },
+          { productId: 'initial-product2', weight: 50000, type: 'DRY_PARCHMENT', variety: 'CASTILLO' },
         ],
         timestamp: new Date().toISOString(),
       });
@@ -82,11 +82,9 @@ describe('The API', () => {
     const actorRes = await chai.request(server).get(`/api/actor/${farmer}`);
     const { inventory, ownership } = actorRes.body;
     expect(inventory).to.have.length(2);
-    expect(inventory[0].id).to.equal('initial-product1');
-    expect(inventory[1].id).to.equal('initial-product2');
+    expect(inventory.map(({ id }) => id)).to.have.members(['initial-product1', 'initial-product2']);
     expect(ownership).to.have.length(2);
-    expect(ownership[0].id).to.equal('initial-product1');
-    expect(ownership[1].id).to.equal('initial-product2');
+    expect(ownership.map(({ id }) => id)).to.have.members(['initial-product1', 'initial-product2']);
   });
 
   it('should be able to transform products', async () => {
@@ -241,12 +239,46 @@ describe('The API', () => {
       .send({
         emitter: cooperative,
         inputs: [],
-        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT' }],
+        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT', variety: 'CASTILLO' }],
         timestamp: new Date().toISOString(),
       });
     const { error } = res.body;
     expect(res).to.have.status(400);
     expect(error).to.equal('Only farmers can create new products');
+  });
+
+  it('should reject product creation with unspecified variety', async () => {
+    const farmer = dbActors[0];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [],
+        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('The variety field is mandatory for the initial creation of new products');
+  });
+
+  it('should reject product transformation with specified variety', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [{ productId: 'derived-product2' }],
+        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT', variety: 'CATURRA' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('The variety field is only supported for the initial creation of new products');
   });
 
   it('should reject vacuous transformations', async () => {

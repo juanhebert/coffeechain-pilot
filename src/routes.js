@@ -78,8 +78,20 @@ app.post('/api/transform', async (req, res) => {
     return res.status(400).send({ error: 'Emitter not found' });
   }
 
-  if (inputs.length === 0 && fullEmitter.type !== 'FARMER') {
-    return res.status(400).send({ error: 'Only farmers can create new products' });
+  if (inputs.length === 0) {
+    if (fullEmitter.type !== 'FARMER') {
+      return res.status(400).send({ error: 'Only farmers can create new products' });
+    }
+
+    if (outputs.some(({ variety }) => !variety)) {
+      return res.status(400).send({ error: 'The variety field is mandatory for the initial creation of new products' });
+    }
+  }
+
+  if (inputs.length > 0 && outputs.some(({ variety }) => !!variety)) {
+    return res
+      .status(400)
+      .send({ error: 'The variety field is only supported for the initial creation of new products' });
   }
 
   if (outputs.length === 0) {
@@ -121,8 +133,8 @@ app.post('/api/transform', async (req, res) => {
   await db.none(newTransformation, [id, emitter, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newTransformationInput, [id, productId])));
   await Promise.all(
-    outputs.map(async ({ productId, weight, type }) => {
-      await db.none(newProduct, [productId, weight, type, null]);
+    outputs.map(async ({ productId, weight, type, variety }) => {
+      await db.none(newProduct, [productId, weight, type, variety]);
       await db.none(newTransformationOutput, [id, productId]);
     }),
   );
