@@ -1,2 +1,3 @@
 select *
-from actor;
+from actor
+order by name;

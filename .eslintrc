@@ -13,7 +13,8 @@
     "rules": {
         "prettier/prettier": [
             "error"
-        ]
+        ],
+        "react/prop-types": 0 // TODO: remove
     },
     "env": {
         "browser": true,
