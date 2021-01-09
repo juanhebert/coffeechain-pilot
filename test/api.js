@@ -63,7 +63,7 @@ describe('The API', () => {
   });
 
   it('should be able to create a product', async () => {
-    const farmer = dbActors[0];
+    const farmer = dbActors[2];
 
     const transformRes = await chai
       .request(server)
@@ -88,7 +88,7 @@ describe('The API', () => {
   });
 
   it('should be able to transform products', async () => {
-    const farmer = dbActors[0];
+    const farmer = dbActors[2];
 
     const transformRes = await chai
       .request(server)
@@ -114,7 +114,7 @@ describe('The API', () => {
   });
 
   it('should be able to ship products', async () => {
-    const [farmer, cooperative, intermediary] = dbActors;
+    const [intermediary, cooperative, farmer] = dbActors;
 
     const ship1Res = await chai
       .request(server)
@@ -153,7 +153,7 @@ describe('The API', () => {
   });
 
   it('should be able to sell products', async () => {
-    const [farmer, cooperative, intermediary] = dbActors;
+    const [intermediary, cooperative, farmer] = dbActors;
 
     const shipRes = await chai
       .request(server)
@@ -196,48 +196,48 @@ describe('The API', () => {
   });
 
   it('should be able to certify an actor', async () => {
-    const [farmer, certifier] = dbActors;
+    const [, certifier, certifiee] = dbActors;
 
     const res = await chai.request(server).post('/api/certificate').send({
       emitter: certifier,
-      receiver: farmer,
+      receiver: certifiee,
       type: 'FLO',
       beginning: '2021-01-01',
       expiration: '2022-01-01',
     });
     expect(res).to.have.status(200);
 
-    const certificateRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const certificateRes = await chai.request(server).get(`/api/actor/${certifiee}`);
     const { certificates } = certificateRes.body;
     expect(certificates).to.have.length(1);
     expect(certificates[0].type).to.equal('FLO');
   });
 
   it('should be able to record a sustanability practice', async () => {
-    const [farmer, certifier] = dbActors;
+    const [certifiee, certifier] = dbActors;
 
     const res = await chai.request(server).post('/api/practice').send({
       emitter: certifier,
-      receiver: farmer,
+      receiver: certifiee,
       type: 'WTS',
       timestamp: '2021-01-01',
     });
     expect(res).to.have.status(200);
 
-    const practiceRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const practiceRes = await chai.request(server).get(`/api/actor/${certifiee}`);
     const { practices } = practiceRes.body;
     expect(practices).to.have.length(1);
     expect(practices[0].type).to.equal('WTS');
   });
 
   it('should only let farmers create new products', async () => {
-    const cooperative = dbActors[1];
+    const actor = dbActors[0];
 
     const res = await chai
       .request(server)
       .post('/api/transform')
       .send({
-        emitter: cooperative,
+        emitter: actor,
         inputs: [],
         outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT', variety: 'CASTILLO' }],
         timestamp: new Date().toISOString(),
@@ -248,7 +248,7 @@ describe('The API', () => {
   });
 
   it('should reject product creation with unspecified variety', async () => {
-    const farmer = dbActors[0];
+    const farmer = dbActors[2];
 
     const res = await chai
       .request(server)
@@ -282,7 +282,7 @@ describe('The API', () => {
   });
 
   it('should reject vacuous transformations', async () => {
-    const farmer = dbActors[0];
+    const farmer = dbActors[2];
 
     const res = await chai.request(server).post('/api/transform').send({
       emitter: farmer,
@@ -364,7 +364,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations that consume inputs the actor does not have', async () => {
-    const farmer = dbActors[0];
+    const farmer = dbActors[2];
 
     const res = await chai
       .request(server)
@@ -382,7 +382,7 @@ describe('The API', () => {
 
   // By definition, covers also inputs that do not exist at all
   it("should reject shipment of products not in the sender's inventory", async () => {
-    const [farmer, cooperative] = dbActors;
+    const [, cooperative, farmer] = dbActors;
 
     const res = await chai
       .request(server)
@@ -399,7 +399,7 @@ describe('The API', () => {
   });
 
   it('should reject shipments with no inputs', async () => {
-    const [farmer, cooperative] = dbActors;
+    const [, cooperative, farmer] = dbActors;
 
     const res = await chai.request(server).post('/api/ship').send({
       sender: farmer,
@@ -414,7 +414,7 @@ describe('The API', () => {
 
   // By definition, covers also inputs that do not exist at all
   it("should reject sale of products not in the seller's ownership", async () => {
-    const [farmer, cooperative] = dbActors;
+    const [, cooperative, farmer] = dbActors;
 
     const res = await chai
       .request(server)
@@ -433,7 +433,7 @@ describe('The API', () => {
   });
 
   it('should reject shipments with no inputs', async () => {
-    const [farmer, cooperative] = dbActors;
+    const [, cooperative, farmer] = dbActors;
 
     const res = await chai.request(server).post('/api/sell').send({
       seller: farmer,
@@ -449,11 +449,11 @@ describe('The API', () => {
   });
 
   it('should reject empty certification validity intervals', async () => {
-    const [farmer, certifier] = dbActors;
+    const [certifiee, certifier] = dbActors;
 
     const res = await chai.request(server).post('/api/certificate').send({
       emitter: certifier,
-      receiver: farmer,
+      receiver: certifiee,
       type: 'FLO',
       beginning: '2022-01-01',
       expiration: '2021-01-01',
