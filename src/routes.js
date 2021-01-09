@@ -258,7 +258,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // eslint-disable-next-line no-console
-app.listen(8080, () => console.log('Listening on port 8080'));
+const port = process.env.NODE_ENV === 'test' ? 8081 : 8080;
+app.listen(port, () => console.log('Listening on port 8080'));
 
 // For testing
 module.exports = app;
