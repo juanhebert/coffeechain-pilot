@@ -366,6 +366,20 @@ describe('The API', () => {
     expect(error).to.equal('Cannot ship product not in inventory');
   });
 
+  it('should reject shipments with no inputs', async () => {
+    const [farmer, cooperative] = dbActors;
+
+    const res = await chai.request(server).post('/api/ship').send({
+      sender: farmer,
+      recipient: cooperative,
+      inputs: [],
+      timestamp: new Date().toISOString(),
+    });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Shipments must have inputs');
+  });
+
   // By definition, covers also inputs that do not exist at all
   it("should reject sale of products not in the seller's ownership", async () => {
     const [farmer, cooperative] = dbActors;
@@ -384,6 +398,22 @@ describe('The API', () => {
     const { error } = res.body;
     expect(res).to.have.status(400);
     expect(error).to.equal('Cannot sell product not in ownership');
+  });
+
+  it('should reject shipments with no inputs', async () => {
+    const [farmer, cooperative] = dbActors;
+
+    const res = await chai.request(server).post('/api/sell').send({
+      seller: farmer,
+      buyer: cooperative,
+      inputs: [],
+      price: 2000,
+      currency: 'COP',
+      timestamp: new Date().toISOString(),
+    });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Sales must have inputs');
   });
 
   it('should reject empty certification validity intervals', async () => {

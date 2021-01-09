@@ -133,6 +133,10 @@ app.post('/api/ship', async (req, res) => {
   const { sender, recipient, inputs, timestamp } = req.body;
   const id = short.generate();
 
+  if (inputs.length === 0) {
+    return res.status(400).send({ error: 'Shipments must have inputs' });
+  }
+
   try {
     await db.one('select type from actor where id = $1', [sender]);
   } catch (e) {
@@ -158,6 +162,10 @@ app.post('/api/ship', async (req, res) => {
 app.post('/api/sell', async (req, res) => {
   const { seller, buyer, inputs, price, currency, timestamp } = req.body;
   const id = short.generate();
+
+  if (inputs.length === 0) {
+    return res.status(400).send({ error: 'Sales must have inputs' });
+  }
 
   try {
     await db.one('select type from actor where id = $1', [seller]);
