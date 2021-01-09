@@ -249,6 +249,20 @@ describe('The API', () => {
     expect(error).to.equal('Only farmers can create new products');
   });
 
+  it('should reject vacuous transformations', async () => {
+    const farmer = dbActors[0];
+
+    const res = await chai.request(server).post('/api/transform').send({
+      emitter: farmer,
+      inputs: [],
+      outputs: [],
+      timestamp: new Date().toISOString(),
+    });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Transformations must have outputs');
+  });
+
   it('should reject transformations when the in and out weight do not match', async () => {
     const cooperative = dbActors[1];
 

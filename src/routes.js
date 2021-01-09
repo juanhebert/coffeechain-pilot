@@ -82,6 +82,10 @@ app.post('/api/transform', async (req, res) => {
     return res.status(400).send({ error: 'Only farmers can create new products' });
   }
 
+  if (outputs.length === 0) {
+    return res.status(400).send({ error: 'Transformations must have outputs' });
+  }
+
   let fullInputs;
   try {
     fullInputs = await Promise.all(
