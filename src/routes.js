@@ -41,53 +41,23 @@ app.get('/api/actor', async (req, res) => {
   res.send({ actors: await db.any(getActors) });
 });
 
-app.get('/api/certificates/:actor', async (req, res) => {
-  const { actor } = req.params;
+app.get('/api/actor/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    await db.one('select type from actor where id = $1', [actor]);
+    await db.one('select type from actor where id = $1', [id]);
   } catch (e) {
     return res.status(400).send({ error: 'Actor not found' });
   }
 
   const now = new Date().toISOString();
-  return res.send({ items: await db.any(getActorCertificates, [actor, now]) });
-});
 
-app.get('/api/inventory/:actor', async (req, res) => {
-  const { actor } = req.params;
+  const certificates = await db.any(getActorCertificates, [id, now]);
+  const practices = await db.any(getActorPractices, [id]);
+  const inventory = await db.any(getActorInventory, [id]);
+  const ownership = await db.any(getActorOwnership, [id]);
 
-  try {
-    await db.one('select type from actor where id = $1', [actor]);
-  } catch (e) {
-    return res.status(400).send({ error: 'Actor not found' });
-  }
-
-  return res.send({ items: await db.any(getActorInventory, [actor]) });
-});
-
-app.get('/api/ownership/:actor', async (req, res) => {
-  const { actor } = req.params;
-
-  try {
-    await db.one('select type from actor where id = $1', [actor]);
-  } catch (e) {
-    return res.status(400).send({ error: 'Actor not found' });
-  }
-
-  return res.send({ items: await db.any(getActorOwnership, [actor]) });
-});
-
-app.get('/api/practices/:actor', async (req, res) => {
-  const { actor } = req.params;
-
-  try {
-    await db.one('select type from actor where id = $1', [actor]);
-  } catch (e) {
-    return res.status(400).send({ error: 'Actor not found' });
-  }
-
-  return res.send({ items: await db.any(getActorPractices, [actor]) });
+  return res.send({ id, certificates, practices, inventory, ownership });
 });
 
 app.post('/api/actor', async (req, res) => {

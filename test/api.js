@@ -79,14 +79,11 @@ describe('The API', () => {
       });
     expect(transformRes).to.have.status(200);
 
-    const inventoryRes = await chai.request(server).get(`/api/inventory/${farmer}`);
-    const { items: inventory } = inventoryRes.body;
+    const actorRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const { inventory, ownership } = actorRes.body;
     expect(inventory).to.have.length(2);
     expect(inventory[0].id).to.equal('initial-product1');
     expect(inventory[1].id).to.equal('initial-product2');
-
-    const ownershipRes = await chai.request(server).get(`/api/inventory/${farmer}`);
-    const { items: ownership } = ownershipRes.body;
     expect(ownership).to.have.length(2);
     expect(ownership[0].id).to.equal('initial-product1');
     expect(ownership[1].id).to.equal('initial-product2');
@@ -110,13 +107,10 @@ describe('The API', () => {
       });
     expect(transformRes).to.have.status(200);
 
-    const inventoryRes = await chai.request(server).get(`/api/inventory/${farmer}`);
-    const { items: inventory } = inventoryRes.body;
+    const actorRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const { inventory, ownership } = actorRes.body;
     expect(inventory).to.have.length(2);
     expect(inventory.map(({ id }) => id)).to.have.members(['derived-product1', 'derived-product2']);
-
-    const ownershipRes = await chai.request(server).get(`/api/ownership/${farmer}`);
-    const { items: ownership } = ownershipRes.body;
     expect(ownership).to.have.length(2);
     expect(ownership.map(({ id }) => id)).to.have.members(['derived-product1', 'derived-product2']);
   });
@@ -146,16 +140,16 @@ describe('The API', () => {
       });
     expect(secondShipRes).to.have.status(200);
 
-    const farmerInventoryRes = await chai.request(server).get(`/api/inventory/${farmer}`);
-    const { items: farmerInventory } = farmerInventoryRes.body;
+    const farmerInventoryRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const { inventory: farmerInventory } = farmerInventoryRes.body;
     expect(farmerInventory).to.have.length(0);
 
-    const intermediaryInventoryRes = await chai.request(server).get(`/api/inventory/${farmer}`);
-    const { items: intermediaryInventory } = intermediaryInventoryRes.body;
+    const intermediaryInventoryRes = await chai.request(server).get(`/api/actor/${intermediary}`);
+    const { inventory: intermediaryInventory } = intermediaryInventoryRes.body;
     expect(intermediaryInventory).to.have.length(0);
 
-    const cooperativeInventoryRes = await chai.request(server).get(`/api/inventory/${cooperative}`);
-    const { items: cooperativeInventory } = cooperativeInventoryRes.body;
+    const cooperativeInventoryRes = await chai.request(server).get(`/api/actor/${cooperative}`);
+    const { inventory: cooperativeInventory } = cooperativeInventoryRes.body;
     expect(cooperativeInventory).to.have.length(2);
     expect(cooperativeInventory.map(({ id }) => id)).to.have.members(['derived-product1', 'derived-product2']);
   });
@@ -189,16 +183,16 @@ describe('The API', () => {
       });
     expect(secondShipRes).to.have.status(200);
 
-    const farmerOwnershipRes = await chai.request(server).get(`/api/ownership/${farmer}`);
-    const { items: farmerOwnership } = farmerOwnershipRes.body;
+    const farmerOwnershipRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const { ownership: farmerOwnership } = farmerOwnershipRes.body;
     expect(farmerOwnership).to.have.length(0);
 
-    const intermediaryOwnershipRes = await chai.request(server).get(`/api/ownership/${farmer}`);
-    const { items: intermediaryOwnership } = intermediaryOwnershipRes.body;
+    const intermediaryOwnershipRes = await chai.request(server).get(`/api/actor/${intermediary}`);
+    const { ownership: intermediaryOwnership } = intermediaryOwnershipRes.body;
     expect(intermediaryOwnership).to.have.length(0);
 
-    const cooperativeOwnershipRes = await chai.request(server).get(`/api/ownership/${cooperative}`);
-    const { items: cooperativeOwnership } = cooperativeOwnershipRes.body;
+    const cooperativeOwnershipRes = await chai.request(server).get(`/api/actor/${cooperative}`);
+    const { ownership: cooperativeOwnership } = cooperativeOwnershipRes.body;
     expect(cooperativeOwnership).to.have.length(2);
     expect(cooperativeOwnership.map(({ id }) => id)).to.have.members(['derived-product1', 'derived-product2']);
   });
@@ -215,8 +209,8 @@ describe('The API', () => {
     });
     expect(res).to.have.status(200);
 
-    const certificateRes = await chai.request(server).get(`/api/certificates/${farmer}`);
-    const { items: certificates } = certificateRes.body;
+    const certificateRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const { certificates } = certificateRes.body;
     expect(certificates).to.have.length(1);
     expect(certificates[0].type).to.equal('FLO');
   });
@@ -232,8 +226,8 @@ describe('The API', () => {
     });
     expect(res).to.have.status(200);
 
-    const practiceRes = await chai.request(server).get(`/api/practices/${farmer}`);
-    const { items: practices } = practiceRes.body;
+    const practiceRes = await chai.request(server).get(`/api/actor/${farmer}`);
+    const { practices } = practiceRes.body;
     expect(practices).to.have.length(1);
     expect(practices[0].type).to.equal('WTS');
   });
