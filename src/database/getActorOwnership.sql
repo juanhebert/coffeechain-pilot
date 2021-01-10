@@ -26,5 +26,7 @@ left join
     join sale_input si_sub
     on s_sub.id = si_sub.sale) s_out
 on s_out.product = p.id and s_out.timestamp > s.timestamp
-where s_out.timestamp is null
+left join transformation_input ti
+on ti.product = p.id
+where s_out.timestamp is null and ti.transformation is null
 and p.type != 'WEIGHT_LOSS';
