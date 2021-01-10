@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     height: 25,
     width: 25,
   },
+  certLogoItem: {
+    margin: '0 10px',
+  },
   certName: {
     fontSize: 10,
     fontWeight: 700,
@@ -121,9 +124,17 @@ const ActorView = () => {
                     <Avatar className={classes.avatar}>{name[0]}</Avatar>
                     <h3>{name}</h3>
                   </Grid>
-                  <Grid item container spacing={2} justify="center">
+                  <Grid item container justify="center" alignItems="center">
                     {certificates.map(({ type: certType }) => (
-                      <Grid item container direction="column" alignItems="center" spacing={1}>
+                      <Grid
+                        item
+                        container
+                        direction="column"
+                        alignItems="center"
+                        className={classes.certLogoItem}
+                        spacing={1}
+                        xs={1}
+                      >
                         <img src={getCertLogo(certType)} alt={certType} className={classes.certLogo} />
                         <span className={classes.certName}>{certType}</span>
                       </Grid>
