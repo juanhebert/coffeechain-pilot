@@ -5,6 +5,7 @@ import ActorView from './views/ActorView';
 import TransformView from './views/TransformView';
 import ShipView from './views/ShipView';
 import SellView from './views/SellView';
+import CertifyView from './views/CertifyView';
 import 'fontsource-roboto';
 import './App.css';
 
@@ -18,6 +19,7 @@ function App() {
           <Route exact path="/transform" component={TransformView} />
           <Route exact path="/ship" component={ShipView} />
           <Route exact path="/sell" component={SellView} />
+          <Route exact path="/certify" component={CertifyView} />
           {/* <Route component={NotFound} /> */}
         </Switch>
       </div>

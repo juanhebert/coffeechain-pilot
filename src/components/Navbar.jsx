@@ -10,8 +10,8 @@ const navLinks = [
   { title: 'transformar', path: '/transform' },
   { title: 'vender', path: '/sell' },
   { title: 'mandar', path: '/ship' },
-  { title: 'certificar', path: '/certificate' },
-  { title: 'observar', path: '/practice' },
+  { title: 'certificar', path: '/certify' },
+  { title: 'observar', path: '/observe' },
 ];
 
 const useStyles = makeStyles({
