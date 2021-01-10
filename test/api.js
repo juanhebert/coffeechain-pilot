@@ -466,6 +466,41 @@ describe('The API', () => {
     expect(error).to.equal('Shipments must have inputs');
   });
 
+  it('should reject shipments with duplicated output ids', async () => {
+    const cooperative = dbActors[1];
+    const intermediary = dbActors[0];
+
+    const res = await chai
+      .request(server)
+      .post('/api/ship')
+      .send({
+        sender: cooperative,
+        recipient: intermediary,
+        inputs: [{ productId: 'derived-product1' }, { productId: 'derived-product1' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Found duplicated output id.');
+  });
+
+  it('should reject shipments when sender and recipient are the same actor', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/ship')
+      .send({
+        sender: cooperative,
+        recipient: cooperative,
+        inputs: [{ productId: 'derived-product1' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Sender and recipient must be different.');
+  });
+
   // By definition, covers also inputs that do not exist at all
   it("should reject sale of products not in the seller's ownership", async () => {
     const [, cooperative, farmer] = dbActors;

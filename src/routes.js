@@ -159,8 +159,17 @@ app.post('/api/ship', async (req, res) => {
   const { sender, recipient, inputs, timestamp } = req.body;
   const id = short.generate();
 
+  if (sender === recipient) {
+    return res.status(400).send({ error: 'Sender and recipient must be different.' });
+  }
+
   if (inputs.length === 0) {
     return res.status(400).send({ error: 'Shipments must have inputs' });
+  }
+
+  const inputIds = inputs.map(({ productId }) => productId);
+  if (new Set(inputIds).size < inputs.length) {
+    return res.status(400).send({ error: 'Found duplicated output id.' });
   }
 
   try {
