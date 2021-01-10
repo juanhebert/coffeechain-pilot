@@ -397,6 +397,26 @@ describe('The API', () => {
     expect(error).to.equal('Cannot use existing ids for new products');
   });
 
+  it('should reject transformations with duplicated output ids', async () => {
+    const cooperative = dbActors[1];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: cooperative,
+        inputs: [{ productId: 'derived-product2' }],
+        outputs: [
+          { productId: 'derived-product-dup', weight: 20000, type: 'ROASTED' },
+          { productId: 'derived-product-dup', weight: 5000, type: 'ROASTED' },
+        ],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Found duplicated output id.');
+  });
+
   it('should reject transformations that consume inputs the actor does not have', async () => {
     const farmer = dbActors[2];
 

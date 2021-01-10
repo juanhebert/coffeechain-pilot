@@ -102,6 +102,11 @@ app.post('/api/transform', async (req, res) => {
     return res.status(400).send({ error: 'Transformations must have outputs' });
   }
 
+  const outputIds = outputs.map(({ productId }) => productId);
+  if (new Set(outputIds).size < outputs.length) {
+    return res.status(400).send({ error: 'Found duplicated output id.' });
+  }
+
   let fullInputs;
   try {
     fullInputs = await Promise.all(
