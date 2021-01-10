@@ -236,9 +236,9 @@ const SellView = () => {
                     onChange={handleCurrencyChange}
                     className={classes.dropdown}
                   >
-                    {currencies.map(({ id, name: actorName }, index) => (
+                    {currencies.map(({ id, name: currencyName }, index) => (
                       <MenuItem value={index} key={id}>
-                        {actorName}
+                        {currencyName}
                       </MenuItem>
                     ))}
                   </Select>
