@@ -13,9 +13,10 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Close } from '@material-ui/icons';
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/core/styles';
 import DateFnsUtils from '@date-io/date-fns';
+import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
 
 import ProductInput from '../components/ProductInput';
@@ -31,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 25,
   },
   dropdown: {
-    minWidth: 220,
+    minWidth: 300,
   },
   fsAligned: {
     alignSelf: 'flex-start',
@@ -142,16 +143,14 @@ const TransformView = () => {
                 </Typography>
               </Grid>
               <Grid item className={classes.fsAligned}>
-                <FormControl>
-                  <InputLabel shrink htmlFor="age-native-label-placeholder">
-                    Actor
-                  </InputLabel>
+                <FormControl variant="outlined" className={classes.dropdown}>
+                  <InputLabel id="demo-simple-select-outlined-label">Actor</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="demo-simple-select-outlined-label"
+                    id="demo-simple-select-outlined"
                     value={emitterIndex}
-                    variant="outlined"
                     onChange={handleChange}
+                    label="Actor"
                     className={classes.dropdown}
                   >
                     {actorList.map(({ id, name: actorName }, index) => (
@@ -163,20 +162,15 @@ const TransformView = () => {
                 </FormControl>
               </Grid>
               <Grid item className={classes.fsAligned}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardDatePicker
-                    disableToolbar
+                <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
+                  <DateTimePicker
+                    format="d MMMM yyyy 'a' 'las' hh:mm a"
+                    className={classes.dropdown}
                     variant="inline"
                     inputVariant="outlined"
-                    format="dd/MM/yyyy"
-                    margin="normal"
-                    id="date-picker-inline"
                     label="Fecha"
                     value={selectedDate}
                     onChange={setSelectedDate}
-                    KeyboardButtonProps={{
-                      'aria-label': 'change date',
-                    }}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>

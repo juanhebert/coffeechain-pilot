@@ -152,15 +152,13 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
         {weightAndVariety ? (
           <>
             <Grid item xs={2}>
-              <FormControl className={classes.dropdown}>
-                <InputLabel shrink htmlFor="age-native-label-placeholder">
-                  Tipo
-                </InputLabel>
+              <FormControl className={classes.dropdown} variant="outlined">
+                <InputLabel id="type-select-label">Tipo</InputLabel>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  label="Tipo"
+                  labelId="type-select-label"
+                  id="type-select"
                   value={typeIndex}
-                  variant="outlined"
                   onChange={handleTypeChange}
                   className={classes.dropdown}
                 >
@@ -173,15 +171,13 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
               </FormControl>
             </Grid>
             <Grid item xs={2}>
-              <FormControl className={classes.dropdown}>
-                <InputLabel shrink htmlFor="age-native-label-placeholder">
-                  Variedad
-                </InputLabel>
+              <FormControl className={classes.dropdown} variant="outlined">
+                <InputLabel id="variety-select-label">Variedad</InputLabel>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  label="Variedad"
+                  labelId="variety-select-label"
+                  id="variety-select"
                   value={varietyIndex}
-                  variant="outlined"
                   onChange={handleVarietyChange}
                   className={classes.dropdown}
                 >
