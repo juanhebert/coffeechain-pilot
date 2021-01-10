@@ -96,6 +96,7 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
             <TextField
               value={productId}
               variant="outlined"
+              className={classes.inputMinWidth}
               InputProps={{
                 readOnly: true,
               }}
