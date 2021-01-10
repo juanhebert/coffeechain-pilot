@@ -96,7 +96,7 @@ const ActorView = () => {
               <Typography variant="h5" className={classes.heading}>
                 Seleccionar actor
               </Typography>
-              <FormControl className={classes.formControl}>
+              <FormControl>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
