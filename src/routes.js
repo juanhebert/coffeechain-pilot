@@ -169,7 +169,7 @@ app.post('/api/ship', async (req, res) => {
 
   const inputIds = inputs.map(({ productId }) => productId);
   if (new Set(inputIds).size < inputs.length) {
-    return res.status(400).send({ error: 'Found duplicated output id.' });
+    return res.status(400).send({ error: 'Found duplicated input id.' });
   }
 
   try {

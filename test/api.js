@@ -481,7 +481,7 @@ describe('The API', () => {
       });
     const { error } = res.body;
     expect(res).to.have.status(400);
-    expect(error).to.equal('Found duplicated output id.');
+    expect(error).to.equal('Found duplicated input id.');
   });
 
   it('should reject shipments when sender and recipient are the same actor', async () => {
