@@ -247,6 +247,23 @@ describe('The API', () => {
     expect(error).to.equal('Only farmers can create new products');
   });
 
+  it('should reject creation with wrong type', async () => {
+    const farmer = dbActors[2];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [],
+        outputs: [{ productId: 'test', weight: 20000, type: 'ROASTED_COFFEE', variety: 'CATURRA' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('A farmer can only create dry or wet parchment.');
+  });
+
   it('should reject product creation with unspecified variety', async () => {
     const farmer = dbActors[2];
 
@@ -293,6 +310,23 @@ describe('The API', () => {
     const { error } = res.body;
     expect(res).to.have.status(400);
     expect(error).to.equal('Transformations must have outputs');
+  });
+
+  it('should reject weightless outputs', async () => {
+    const farmer = dbActors[2];
+
+    const res = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [],
+        outputs: [{ productId: 'test', weight: 0, type: 'DRY_PARCHMENT', variety: 'CATURRA' }],
+        timestamp: new Date().toISOString(),
+      });
+    const { error } = res.body;
+    expect(res).to.have.status(400);
+    expect(error).to.equal('Cannot produce weightless products.');
   });
 
   it('should reject transformations when the in and out weight do not match', async () => {

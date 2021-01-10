@@ -86,6 +86,10 @@ app.post('/api/transform', async (req, res) => {
     if (outputs.some(({ variety }) => !variety)) {
       return res.status(400).send({ error: 'The variety field is mandatory for the initial creation of new products' });
     }
+
+    if (outputs.some(({ type }) => !['WET_PARCHMENT', 'DRY_PARCHMENT'].includes(type))) {
+      return res.status(400).send({ error: 'A farmer can only create dry or wet parchment.' });
+    }
   }
 
   if (inputs.length > 0 && outputs.some(({ variety }) => !!variety)) {
@@ -109,8 +113,13 @@ app.post('/api/transform', async (req, res) => {
 
   const inWeight = fullInputs.reduce((previous, current) => previous + current.weight, 0);
   const outWeight = outputs.reduce((previous, current) => previous + current.weight, 0);
+
   if (inputs.length > 0 && inWeight !== outWeight) {
     return res.status(400).send({ error: 'The cumulative weights of the inputs and outputs must be equal' });
+  }
+
+  if (outputs.some(({ weight }) => weight === 0)) {
+    return res.status(400).send({ error: 'Cannot produce weightless products.' });
   }
 
   if (fullInputs.some(({ type }) => type === 'WEIGHT_LOSS')) {
