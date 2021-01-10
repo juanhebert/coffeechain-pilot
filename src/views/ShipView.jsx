@@ -39,36 +39,41 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TransformView = () => {
+const ShipView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [emitterIndex, setEmitterIndex] = useState(0);
+  const [senderIndex, setSenderIndex] = useState(0);
+  const [recipientIndex, setRecipientIndex] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [inputs, setInputs] = useState([]);
-  const [outputs, setOutputs] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleChange = event => {
+  const handleSenderChange = event => {
     const index = event.target.value;
-    setEmitterIndex(index);
+    setSenderIndex(index);
+  };
+
+  const handleRecipientChange = event => {
+    const index = event.target.value;
+    setRecipientIndex(index);
   };
 
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
-    const { id: emitter } = actorList[emitterIndex];
+    const { id: sender } = actorList[senderIndex];
+    const { id: recipient } = actorList[recipientIndex];
     const timestamp = selectedDate.toISOString();
 
     axios
-      .post('/api/transform', { emitter, timestamp, inputs, outputs })
+      .post('/api/ship', { sender, recipient, timestamp, inputs })
       .then(() => {
-        setEmitterIndex(0);
+        setSenderIndex(0);
         setSelectedDate(new Date());
         setInputs([]);
-        setOutputs([]);
         setShowError(false);
         setShowSuccess(true);
       })
@@ -124,7 +129,7 @@ const TransformView = () => {
             }
             severity="success"
           >
-            Transformación realizada exitosamente.
+            Envío realizado exitosamente.
           </Alert>
         </Collapse>
       </Grid>
@@ -133,7 +138,7 @@ const TransformView = () => {
           <Grid container direction="column" spacing={5}>
             <Grid item>
               <Typography variant="h5" className={classes.heading}>
-                Transformar productos
+                Registrar envío
               </Typography>
             </Grid>
             <Grid item container direction="column" spacing={2}>
@@ -144,13 +149,32 @@ const TransformView = () => {
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <FormControl variant="outlined" className={classes.dropdown}>
-                  <InputLabel id="actor-select-label">Actor</InputLabel>
+                  <InputLabel id="sender-select-label">Remitente</InputLabel>
                   <Select
-                    labelId="actor-select-label"
-                    id="actor-select"
-                    value={emitterIndex}
-                    onChange={handleChange}
-                    label="Actor"
+                    label="Remitente"
+                    labelId="sender-select-label"
+                    id="sender-select"
+                    value={senderIndex}
+                    onChange={handleSenderChange}
+                    className={classes.dropdown}
+                  >
+                    {actorList.map(({ id, name: actorName }, index) => (
+                      <MenuItem value={index} key={id}>
+                        {actorName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item className={classes.fsAligned}>
+                <FormControl variant="outlined" className={classes.dropdown}>
+                  <InputLabel id="recipient-select-label">Destinatario</InputLabel>
+                  <Select
+                    label="Destinatario"
+                    labelId="recipient-select-label"
+                    id="recipient-select"
+                    value={recipientIndex}
+                    onChange={handleRecipientChange}
                     className={classes.dropdown}
                   >
                     {actorList.map(({ id, name: actorName }, index) => (
@@ -177,15 +201,9 @@ const TransformView = () => {
             </Grid>
             <Grid item>
               <Typography variant="h6" className={classes.heading}>
-                Entradas
+                Productos a enviar
               </Typography>
               <ProductInput products={inputs} setProducts={setInputs} />
-            </Grid>
-            <Grid item>
-              <Typography variant="h6" className={classes.heading}>
-                Salidas
-              </Typography>
-              <ProductInput products={outputs} setProducts={setOutputs} weightAndVariety />
             </Grid>
             <Grid item>
               <Button variant="contained" color="primary" onClick={onSubmit}>
@@ -199,4 +217,4 @@ const TransformView = () => {
   );
 };
 
-export default TransformView;
+export default ShipView;

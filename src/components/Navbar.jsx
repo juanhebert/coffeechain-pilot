@@ -9,7 +9,7 @@ const navLinks = [
   { title: 'actores', path: '/' },
   { title: 'transformar', path: '/transform' },
   { title: 'vender', path: '/sell' },
-  { title: 'mandar', path: '/sent' },
+  { title: 'mandar', path: '/ship' },
   { title: 'certificar', path: '/certificate' },
   { title: 'observar', path: '/practice' },
 ];

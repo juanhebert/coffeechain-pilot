@@ -7,6 +7,9 @@ const useStyles = makeStyles(() => ({
   dropdown: {
     width: '100%',
   },
+  inputMinWidth: {
+    minWidth: 140,
+  },
 }));
 
 const types = [
@@ -144,6 +147,7 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
           <TextField
             variant="outlined"
             label="ID del producto"
+            className={classes.inputMinWidth}
             value={currentProduct}
             onChange={event => setCurrentProduct(event.target.value)}
             onKeyPress={handleKeyPress}
