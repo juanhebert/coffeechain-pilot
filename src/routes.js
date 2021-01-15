@@ -22,6 +22,7 @@ const {
   newPractice,
   newAttachment,
   newActor,
+  getEvents,
 } = require('./database/queries');
 
 const cn = process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain';
@@ -58,6 +59,10 @@ app.get('/api/actor/:id', async (req, res) => {
   const ownership = await db.any(getActorOwnership, [id]);
 
   return res.send({ id, certificates, practices, inventory, ownership });
+});
+
+app.get('/api/event', async (req, res) => {
+  res.send({ events: await db.any(getEvents) });
 });
 
 app.post('/api/actor', async (req, res) => {

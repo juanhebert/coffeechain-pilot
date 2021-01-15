@@ -13,6 +13,7 @@ module.exports = {
   getActorOwnership: sql('getActorOwnership.sql'),
   getActorPractices: sql('getActorPractices.sql'),
   getActors: sql('getActors.sql'),
+  getEvents: sql('getEvents.sql'),
   newActor: sql('newActor.sql'),
   newAttachment: sql('newAttachment.sql'),
   newCertificate: sql('newCertificate.sql'),
