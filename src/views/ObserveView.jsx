@@ -42,7 +42,7 @@ const practices = [
   { id: 'ST', name: 'Árboles de sombra' },
   { id: 'RE', name: 'Uso de energías renovelables' },
   { id: 'PH', name: 'Uso de herbicidas' },
-  { id: 'PH', name: 'Uso de fungicidas' },
+  { id: 'PF', name: 'Uso de fungicidas' },
   { id: 'PI', name: 'Uso de insecticidas' },
   { id: 'PN', name: 'No se usan pesticidas' },
   { id: 'MM', name: 'Manejo responsable de productos químicos' },
