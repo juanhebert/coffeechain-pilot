@@ -22,7 +22,17 @@ const {
   newPractice,
   newAttachment,
   newActor,
+  getAttachments,
+  getCertificate,
   getEvents,
+  getPractice,
+  getTransformation,
+  getTransformationInputs,
+  getTransformationOutputs,
+  getSale,
+  getSaleInputs,
+  getShipment,
+  getShipmentInputs,
 } = require('./database/queries');
 
 const cn = process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain';
@@ -63,6 +73,85 @@ app.get('/api/actor/:id', async (req, res) => {
 
 app.get('/api/event', async (req, res) => {
   res.send({ events: await db.any(getEvents) });
+});
+
+app.get('/api/transformation/:id', async (req, res) => {
+  const { id } = req.params;
+  let basicInfo;
+
+  try {
+    basicInfo = await db.one(getTransformation, [id]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Transformation not found' });
+  }
+
+  const inputs = await db.any(getTransformationInputs, [id]);
+  const outputs = await db.any(getTransformationOutputs, [id]);
+  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+
+  return res.send({ basicInfo, inputs, outputs, attachments });
+});
+
+app.get('/api/shipment/:id', async (req, res) => {
+  const { id } = req.params;
+  let basicInfo;
+
+  try {
+    basicInfo = await db.one(getShipment, [id]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Shipment not found' });
+  }
+
+  const inputs = await db.any(getShipmentInputs, [id]);
+  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+
+  return res.send({ basicInfo, inputs, attachments });
+});
+
+app.get('/api/sale/:id', async (req, res) => {
+  const { id } = req.params;
+  let basicInfo;
+
+  try {
+    basicInfo = await db.one(getSale, [id]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Sale not found' });
+  }
+
+  const inputs = await db.any(getSaleInputs, [id]);
+  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+
+  return res.send({ basicInfo, inputs, attachments });
+});
+
+app.get('/api/certificate/:id', async (req, res) => {
+  const { id } = req.params;
+  let basicInfo;
+
+  try {
+    basicInfo = await db.one(getCertificate, [id]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Certificate not found' });
+  }
+
+  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+
+  return res.send({ basicInfo, attachments });
+});
+
+app.get('/api/practice/:id', async (req, res) => {
+  const { id } = req.params;
+  let basicInfo;
+
+  try {
+    basicInfo = await db.one(getPractice, [id]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Practice not found' });
+  }
+
+  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+
+  return res.send({ basicInfo, attachments });
 });
 
 app.post('/api/actor', async (req, res) => {

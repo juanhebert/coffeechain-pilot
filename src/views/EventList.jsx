@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
@@ -18,6 +19,9 @@ const useStyles = makeStyles(theme => ({
   },
   heading: {
     marginBottom: 25,
+  },
+  link: {
+    textDecoration: 'none',
   },
 }));
 
@@ -57,7 +61,9 @@ const EventList = () => {
             {events.map(({ id, emittername, timestamp, type }) => (
               <TableRow key={id}>
                 <TableCell component="th" scope="row">
-                  {id}
+                  <Link to={`/events/${type.toLowerCase()}/${id}`} className={classes.link}>
+                    {id}
+                  </Link>
                 </TableCell>
                 <TableCell>{eventTypes[type]}</TableCell>
                 <TableCell>{emittername}</TableCell>
