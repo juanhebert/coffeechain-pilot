@@ -7,6 +7,7 @@ import ShipView from './views/ShipView';
 import SellView from './views/SellView';
 import CertifyView from './views/CertifyView';
 import ObserveView from './views/ObserveView';
+import EventList from './views/EventList';
 import 'fontsource-roboto';
 import './App.css';
 
@@ -22,6 +23,7 @@ function App() {
           <Route exact path="/sell" component={SellView} />
           <Route exact path="/certify" component={CertifyView} />
           <Route exact path="/observe" component={ObserveView} />
+          <Route exact path="/events" component={EventList} />
           {/* <Route component={NotFound} /> */}
         </Switch>
       </div>
