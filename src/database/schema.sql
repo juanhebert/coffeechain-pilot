@@ -73,6 +73,7 @@ create table sale_input(
 );
 
 create table certificate(
+    id text primary key,
     emitter text not null references actor(id),
     receiver text not null references actor(id),
     type text not null, -- one of UTZ, FAIRTRADE
@@ -81,6 +82,7 @@ create table certificate(
 );
 
 create table practice(
+    id text primary key,
     emitter text not null references actor(id),
     receiver text not null references actor(id),
     type text not null, -- TBD

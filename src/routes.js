@@ -243,7 +243,8 @@ app.post('/api/certificate', async (req, res) => {
     return res.status(400).send({ error: 'Invalid date range' });
   }
 
-  await db.none(newCertificate, [emitter, receiver, type, beginning, expiration]);
+  const id = short.generate();
+  await db.none(newCertificate, [id, emitter, receiver, type, beginning, expiration]);
   return res.send('OK');
 });
 
@@ -262,7 +263,8 @@ app.post('/api/practice', async (req, res) => {
     return res.status(400).send({ error: 'Receiver not found' });
   }
 
-  await db.none(newPractice, [emitter, receiver, type, timestamp]);
+  const id = short.generate();
+  await db.none(newPractice, [id, emitter, receiver, type, timestamp]);
   return res.send('OK');
 });
 
@@ -280,8 +282,8 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// eslint-disable-next-line no-console
 const port = process.env.NODE_ENV === 'test' ? 8081 : 8080;
+// eslint-disable-next-line no-console
 app.listen(port, () => console.log('Listening on port 8080'));
 
 // For testing
