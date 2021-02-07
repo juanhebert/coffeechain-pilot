@@ -15,8 +15,10 @@ const {
   newTransformationOutput,
   newProduct,
   newShipment,
+  newShipmentConfirmation,
   newShipmentInput,
   newSale,
+  newSaleConfirmation,
   newSaleInput,
   newCertificate,
   newPractice,
@@ -285,6 +287,24 @@ app.post('/api/ship', async (req, res) => {
 
   await db.none(newShipment, [id, sender, recipient, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newShipmentInput, [id, productId])));
+  return res.send({ id });
+});
+
+app.post('/api/receive', async (req, res) => {
+  const { recipient, shipment, timestamp } = req.body;
+
+  try {
+    await db.one('select * from shipment where id = $1 and recipient = $2;', [shipment, recipient]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Shipment not found' });
+  }
+
+  try {
+    await db.none(newShipmentConfirmation, [shipment, timestamp]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Shipment already confirmed' });
+  }
+
   return res.send('OK');
 });
 
@@ -315,6 +335,24 @@ app.post('/api/sell', async (req, res) => {
 
   await db.none(newSale, [id, seller, buyer, price, currency, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newSaleInput, [id, productId])));
+  return res.send({ id });
+});
+
+app.post('/api/buy', async (req, res) => {
+  const { buyer, sale, timestamp } = req.body;
+
+  try {
+    await db.one('select * from sale where id = $1 and buyer = $2;', [sale, buyer]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Sale not found' });
+  }
+
+  try {
+    await db.none(newSaleConfirmation, [sale, timestamp]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Sale already confirmed' });
+  }
+
   return res.send('OK');
 });
 

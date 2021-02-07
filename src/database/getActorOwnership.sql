@@ -20,6 +20,8 @@ join sale_input si
 on si.product = p.id
 join sale s
 on s.id = si.sale and s.buyer = $1
+join sale_confirmation sc
+on sc.sale = s.id
 left join
     (select si_sub.product, s_sub.timestamp
     from sale s_sub

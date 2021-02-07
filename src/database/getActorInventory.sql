@@ -20,6 +20,8 @@ join shipment_input si
 on si.product = p.id
 join shipment s
 on s.id = si.shipment and s.recipient = $1
+join shipment_confirmation sc
+on sc.shipment = s.id
 left join
     (select si_sub.product, s_sub.timestamp
     from shipment s_sub

@@ -116,7 +116,7 @@ describe('The API', () => {
   it('should be able to ship products', async () => {
     const [intermediary, cooperative, farmer] = dbActors;
 
-    const ship1Res = await chai
+    const firstShipRes = await chai
       .request(server)
       .post('/api/ship')
       .send({
@@ -125,7 +125,15 @@ describe('The API', () => {
         inputs: [{ productId: 'derived-product1' }, { productId: 'derived-product2' }],
         timestamp: new Date().toISOString(),
       });
-    expect(ship1Res).to.have.status(200);
+    expect(firstShipRes).to.have.status(200);
+
+    const { id: firstShipId } = firstShipRes.body;
+    const firstShipConfirm = await chai.request(server).post('/api/receive').send({
+      recipient: intermediary,
+      shipment: firstShipId,
+      timestamp: new Date().toISOString(),
+    });
+    expect(firstShipConfirm).to.have.status(200);
 
     const secondShipRes = await chai
       .request(server)
@@ -137,6 +145,14 @@ describe('The API', () => {
         timestamp: new Date().toISOString(),
       });
     expect(secondShipRes).to.have.status(200);
+
+    const { id: secondShipId } = secondShipRes.body;
+    const secondShipConfirm = await chai.request(server).post('/api/receive').send({
+      recipient: cooperative,
+      shipment: secondShipId,
+      timestamp: new Date().toISOString(),
+    });
+    expect(secondShipConfirm).to.have.status(200);
 
     const farmerInventoryRes = await chai.request(server).get(`/api/actor/${farmer}`);
     const { inventory: farmerInventory } = farmerInventoryRes.body;
@@ -155,7 +171,7 @@ describe('The API', () => {
   it('should be able to sell products', async () => {
     const [intermediary, cooperative, farmer] = dbActors;
 
-    const shipRes = await chai
+    const firstSellRes = await chai
       .request(server)
       .post('/api/sell')
       .send({
@@ -166,9 +182,17 @@ describe('The API', () => {
         currency: 'COP',
         timestamp: new Date().toISOString(),
       });
-    expect(shipRes).to.have.status(200);
+    expect(firstSellRes).to.have.status(200);
 
-    const secondShipRes = await chai
+    const { id: firstSellId } = firstSellRes.body;
+    const firstSellConfirm = await chai.request(server).post('/api/buy').send({
+      buyer: intermediary,
+      sale: firstSellId,
+      timestamp: new Date().toISOString(),
+    });
+    expect(firstSellConfirm).to.have.status(200);
+
+    const secondSellRes = await chai
       .request(server)
       .post('/api/sell')
       .send({
@@ -179,7 +203,15 @@ describe('The API', () => {
         currency: 'COP',
         timestamp: new Date().toISOString(),
       });
-    expect(secondShipRes).to.have.status(200);
+    expect(secondSellRes).to.have.status(200);
+
+    const { id: secondSellId } = secondSellRes.body;
+    const secondSellConfirm = await chai.request(server).post('/api/buy').send({
+      buyer: cooperative,
+      sale: secondSellId,
+      timestamp: new Date().toISOString(),
+    });
+    expect(secondSellConfirm).to.have.status(200);
 
     const farmerOwnershipRes = await chai.request(server).get(`/api/actor/${farmer}`);
     const { ownership: farmerOwnership } = farmerOwnershipRes.body;

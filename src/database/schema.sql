@@ -7,8 +7,10 @@ drop table if exists
     transformation_input,
     transformation_output,
     shipment,
+    shipment_confirmation,
     shipment_input,
     sale,
+    sale_confirmation,
     sale_input,
     certificate,
     practice,
@@ -58,6 +60,11 @@ create table shipment_input(
     product text not null references product(id)
 );
 
+create table shipment_confirmation(
+    shipment text references shipment(id) primary key,
+    timestamp text not null
+);
+
 create table sale(
     id text primary key,
     seller text not null references actor(id),
@@ -70,6 +77,11 @@ create table sale(
 create table sale_input(
     sale text not null references sale(id),
     product text not null references product(id)
+);
+
+create table sale_confirmation(
+    sale text references sale(id) primary key,
+    timestamp text not null
 );
 
 create table certificate(
