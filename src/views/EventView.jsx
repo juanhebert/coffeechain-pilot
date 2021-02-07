@@ -60,8 +60,8 @@ const getCertLogo = certType => {
   }
 };
 
-const InfoListItem = ({ value, title, isDate = false, isType = false, isCert = false }) => {
-  if (!value) return null;
+const InfoListItem = ({ value, title, isDate = false, isType = false, isCert = false, showFalsey = false }) => {
+  if (!showFalsey && !value) return null;
 
   const classes = useStyles();
 
@@ -80,7 +80,7 @@ const InfoListItem = ({ value, title, isDate = false, isType = false, isCert = f
 
   let secondary = value;
   if (isDate) {
-    secondary = new Date(value).toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+    secondary = value ? new Date(value).toLocaleString('es-CO', { timeZone: 'America/Bogota' }) : 'Sin confirmar';
   }
   if (isCert) {
     secondary = certificateTypeTranslations[value];
@@ -128,6 +128,7 @@ const EventView = () => {
     sendername,
     recipientname,
     timestamp,
+    confirmationtime,
     beginning,
     expiration,
     type: certType,
@@ -155,6 +156,12 @@ const EventView = () => {
               <InfoListItem value={sendername} title="Remitente" />
               <InfoListItem value={recipientname} title="Destinatario" />
               <InfoListItem value={timestamp} isDate title="Fecha y hora" />
+              <InfoListItem
+                value={confirmationtime}
+                isDate
+                showFalsey={['shipment', 'sale'].includes(eventType)}
+                title="Confirmado el"
+              />
               <InfoListItem value={beginning} isDate title="Comienzo" />
               <InfoListItem value={expiration} isDate title="Final" />
             </List>
