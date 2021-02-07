@@ -64,7 +64,7 @@ const ActorView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [selectedActorIndex, setSelectedActorIndex] = useState();
+  const [selectedActorIndex, setSelectedActorIndex] = useState('');
   const [selectedActor, setSelectedActor] = useState();
   const [actorInfo, setActorInfo] = useState();
 
@@ -134,6 +134,7 @@ const ActorView = () => {
                         className={classes.certLogoItem}
                         spacing={1}
                         xs={1}
+                        key={certType}
                       >
                         <img src={getCertLogo(certType)} alt={certType} className={classes.certLogo} />
                         <span className={classes.certName}>{certType}</span>
