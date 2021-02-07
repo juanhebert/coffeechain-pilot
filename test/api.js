@@ -262,6 +262,51 @@ describe('The API', () => {
     expect(practices[0].type).to.equal('WTS');
   });
 
+  it('should be able to retrieve pending shipments and sales', async () => {
+    const [, recipient, farmer] = dbActors;
+
+    const resTransform = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [],
+        outputs: [{ productId: 'test-product', weight: 1000, type: 'DRY_PARCHMENT', variety: 'CASTILLO' }],
+        timestamp: new Date().toISOString(),
+      });
+    expect(resTransform).to.have.status(200);
+
+    const resShip = await chai
+      .request(server)
+      .post('/api/ship')
+      .send({
+        sender: farmer,
+        recipient,
+        inputs: [{ productId: 'test-product' }],
+        timestamp: new Date().toISOString(),
+      });
+    expect(resShip).to.have.status(200);
+
+    const resSell = await chai
+      .request(server)
+      .post('/api/sell')
+      .send({
+        seller: farmer,
+        buyer: recipient,
+        inputs: [{ productId: 'test-product' }],
+        price: 2000,
+        currency: 'COP',
+        timestamp: new Date().toISOString(),
+      });
+    expect(resSell).to.have.status(200);
+
+    const resPending = await chai.request(server).get(`/api/pending/${recipient}`);
+    expect(resPending).to.have.status(200);
+    const { pendingSales, pendingShipments } = resPending.body;
+    expect(pendingSales).to.have.length(1);
+    expect(pendingShipments).to.have.length(1);
+  });
+
   it('should only let farmers create new products', async () => {
     const actor = dbActors[0];
 

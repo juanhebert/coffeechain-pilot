@@ -17,6 +17,8 @@ module.exports = {
   getCertificate: sql('getCertificate.sql'),
   getEvents: sql('getEvents.sql'),
   getPractice: sql('getPractice.sql'),
+  getPendingSales: sql('getPendingSales.sql'),
+  getPendingShipments: sql('getPendingShipments.sql'),
   getSale: sql('getSale.sql'),
   getSaleInputs: sql('getSaleInputs.sql'),
   getShipment: sql('getShipment.sql'),

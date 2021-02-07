@@ -10,6 +10,8 @@ const {
   getActorInventory,
   getActorOwnership,
   getActorPractices,
+  getPendingSales,
+  getPendingShipments,
   newTransformation,
   newTransformationInput,
   newTransformationOutput,
@@ -154,6 +156,19 @@ app.get('/api/practice/:id', async (req, res) => {
   const attachments = await db.any(getAttachments, [id, basicInfo.type]);
 
   return res.send({ basicInfo, attachments });
+});
+
+app.get('/api/pending/:actorId', async (req, res) => {
+  const { actorId } = req.params;
+  try {
+    await db.one('select type from actor where id = $1', [actorId]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Actor not found' });
+  }
+
+  const pendingSales = await db.any(getPendingSales, [actorId]);
+  const pendingShipments = await db.any(getPendingShipments, [actorId]);
+  return res.send({ pendingSales, pendingShipments });
 });
 
 app.post('/api/actor', async (req, res) => {
