@@ -19,6 +19,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
 
+import { useLogin } from '../LoginContext';
 import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
@@ -43,18 +44,15 @@ const ShipView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [senderIndex, setSenderIndex] = useState(0);
   const [recipientIndex, setRecipientIndex] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [inputs, setInputs] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [login] = useLogin();
 
-  const handleSenderChange = event => {
-    const index = event.target.value;
-    setSenderIndex(index);
-  };
+  const { id: sender } = login;
 
   const handleRecipientChange = event => {
     const index = event.target.value;
@@ -64,14 +62,12 @@ const ShipView = () => {
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
-    const { id: sender } = actorList[senderIndex];
     const { id: recipient } = actorList[recipientIndex];
     const timestamp = selectedDate.toISOString();
 
     axios
       .post('/api/ship', { sender, recipient, timestamp, inputs })
       .then(() => {
-        setSenderIndex(0);
         setSelectedDate(new Date());
         setInputs([]);
         setShowError(false);
@@ -146,25 +142,6 @@ const ShipView = () => {
                 <Typography variant="h6" className={classes.heading}>
                   Información básica
                 </Typography>
-              </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
-                  <InputLabel id="sender-select-label">Remitente</InputLabel>
-                  <Select
-                    label="Remitente"
-                    labelId="sender-select-label"
-                    id="sender-select"
-                    value={senderIndex}
-                    onChange={handleSenderChange}
-                    className={classes.dropdown}
-                  >
-                    {actorList.map(({ id, name: actorName }, index) => (
-                      <MenuItem value={index} key={id}>
-                        {actorName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <FormControl variant="outlined" className={classes.dropdown}>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { LoginContextProvider } from './LoginContext';
 import Navbar from './components/Navbar';
 import ActorView from './views/ActorView';
 import TransformView from './views/TransformView';
@@ -14,22 +15,24 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Switch>
-          <Route exact path="/" component={ActorView} />
-          <Route exact path="/transform" component={TransformView} />
-          <Route exact path="/ship" component={ShipView} />
-          <Route exact path="/sell" component={SellView} />
-          <Route exact path="/certify" component={CertifyView} />
-          <Route exact path="/observe" component={ObserveView} />
-          <Route exact path="/events" component={EventList} />
-          <Route exact path="/events/:eventType/:eventId" component={EventView} />
-          {/* <Route component={NotFound} /> */}
-        </Switch>
-      </div>
-    </Router>
+    <LoginContextProvider>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <Switch>
+            <Route exact path="/" component={ActorView} />
+            <Route exact path="/transform" component={TransformView} />
+            <Route exact path="/ship" component={ShipView} />
+            <Route exact path="/sell" component={SellView} />
+            <Route exact path="/certify" component={CertifyView} />
+            <Route exact path="/observe" component={ObserveView} />
+            <Route exact path="/events" component={EventList} />
+            <Route exact path="/events/:eventType/:eventId" component={EventView} />
+            {/* <Route component={NotFound} /> */}
+          </Switch>
+        </div>
+      </Router>
+    </LoginContextProvider>
   );
 }
 

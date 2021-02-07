@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AppBar, Container, IconButton, Toolbar, List, ListItem, ListItemText } from '@material-ui/core';
+import {
+  AppBar,
+  Container,
+  FormControl,
+  IconButton,
+  Select,
+  Toolbar,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios';
+
+import { useLogin } from '../LoginContext';
 
 import Logo from '../img/logo-lightmode.svg';
 
@@ -36,6 +50,24 @@ const useStyles = makeStyles({
 
 const Navbar = () => {
   const classes = useStyles();
+  const [actorList, setActorList] = useState([]);
+  const [, setLogin] = useLogin();
+  const [selectedActorIndex, setSelectedActorIndex] = useState(0);
+
+  useEffect(async () => {
+    const { data } = await axios.get('/api/actor');
+    const { actors } = data;
+    setActorList(actors);
+    setLogin(actors[0]);
+  }, []);
+
+  const handleChange = event => {
+    const index = event.target.value;
+    setSelectedActorIndex(index);
+    setLogin(actorList[index]);
+  };
+
+  if (actorList.length === 0) return null;
 
   return (
     <AppBar position="static">
@@ -52,6 +84,21 @@ const Navbar = () => {
                 </ListItem>
               </Link>
             ))}
+            <FormControl>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedActorIndex}
+                onChange={handleChange}
+                className={classes.dropdown}
+              >
+                {actorList.map(({ id, name: actorName }, index) => (
+                  <MenuItem value={index} key={id}>
+                    {actorName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </List>
         </Container>
       </Toolbar>

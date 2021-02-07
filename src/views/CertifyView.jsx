@@ -19,6 +19,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
 
+import { useLogin } from '../LoginContext';
+
 const useStyles = makeStyles(theme => ({
   main: {
     marginTop: 15,
@@ -46,7 +48,6 @@ const CertifyView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [emitterIndex, setEmitterIndex] = useState(0);
   const [receiverIndex, setReceiverIndex] = useState(0);
   const [certificateIndex, setCertificateIndex] = useState(0);
   const [currentBeginning, setBeginning] = useState(new Date());
@@ -54,11 +55,9 @@ const CertifyView = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [login] = useLogin();
 
-  const handleEmitterChange = event => {
-    const index = event.target.value;
-    setEmitterIndex(index);
-  };
+  const { id: emitter } = login;
 
   const handleReceiverChange = event => {
     const index = event.target.value;
@@ -73,7 +72,6 @@ const CertifyView = () => {
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
-    const { id: emitter } = actorList[emitterIndex];
     const { id: receiver } = actorList[receiverIndex];
     const { id: type } = certifications[certificateIndex];
     const beginning = currentBeginning.toISOString();
@@ -82,7 +80,6 @@ const CertifyView = () => {
     axios
       .post('/api/certificate', { emitter, receiver, type, beginning, expiration })
       .then(() => {
-        setEmitterIndex(0);
         setBeginning(new Date());
         setExpiration(new Date());
         setShowError(false);
@@ -157,25 +154,6 @@ const CertifyView = () => {
                 <Typography variant="h6" className={classes.heading}>
                   Información básica
                 </Typography>
-              </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
-                  <InputLabel id="emitter-select-label">Certificador</InputLabel>
-                  <Select
-                    label="Certificador"
-                    labelId="emitter-select-label"
-                    id="emitter-select"
-                    value={emitterIndex}
-                    onChange={handleEmitterChange}
-                    className={classes.dropdown}
-                  >
-                    {actorList.map(({ id, name: actorName }, index) => (
-                      <MenuItem value={index} key={id}>
-                        {actorName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <FormControl variant="outlined" className={classes.dropdown}>

@@ -1,16 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Collapse,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-} from '@material-ui/core';
+import React, { useState } from 'react';
+import { Button, Collapse, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Close } from '@material-ui/icons';
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
@@ -19,6 +8,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
 
+import { useLogin } from '../LoginContext';
 import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
@@ -42,30 +32,24 @@ const useStyles = makeStyles(theme => ({
 const TransformView = () => {
   const classes = useStyles();
 
-  const [actorList, setActorList] = useState([]);
-  const [emitterIndex, setEmitterIndex] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [inputs, setInputs] = useState([]);
   const [outputs, setOutputs] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [login] = useLogin();
 
-  const handleChange = event => {
-    const index = event.target.value;
-    setEmitterIndex(index);
-  };
+  const { id: emitter } = login;
 
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
-    const { id: emitter } = actorList[emitterIndex];
     const timestamp = selectedDate.toISOString();
 
     axios
       .post('/api/transform', { emitter, timestamp, inputs, outputs })
       .then(() => {
-        setEmitterIndex(0);
         setSelectedDate(new Date());
         setInputs([]);
         setOutputs([]);
@@ -79,12 +63,6 @@ const TransformView = () => {
         setShowError(true);
       });
   };
-
-  useEffect(async () => {
-    const { data } = await axios.get('/api/actor');
-    const { actors } = data;
-    setActorList(actors);
-  }, []);
 
   return (
     <Grid container className={classes.main} direction="column" alignItems="center" spacing={3}>
@@ -141,25 +119,6 @@ const TransformView = () => {
                 <Typography variant="h6" className={classes.heading}>
                   Información básica
                 </Typography>
-              </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
-                  <InputLabel id="actor-select-label">Actor</InputLabel>
-                  <Select
-                    labelId="actor-select-label"
-                    id="actor-select"
-                    value={emitterIndex}
-                    onChange={handleChange}
-                    label="Actor"
-                    className={classes.dropdown}
-                  >
-                    {actorList.map(({ id, name: actorName }, index) => (
-                      <MenuItem value={index} key={id}>
-                        {actorName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>

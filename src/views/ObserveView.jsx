@@ -19,6 +19,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
 
+import { useLogin } from '../LoginContext';
+
 const useStyles = makeStyles(theme => ({
   main: {
     marginTop: 15,
@@ -52,18 +54,15 @@ const ObserveView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [emitterIndex, setEmitterIndex] = useState(0);
   const [receiverIndex, setReceiverIndex] = useState(0);
   const [practiceIndex, setPracticeIndex] = useState(0);
   const [date, setDate] = useState(new Date());
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [login] = useLogin();
 
-  const handleEmitterChange = event => {
-    const index = event.target.value;
-    setEmitterIndex(index);
-  };
+  const { id: emitter } = login;
 
   const handleReceiverChange = event => {
     const index = event.target.value;
@@ -78,7 +77,6 @@ const ObserveView = () => {
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
-    const { id: emitter } = actorList[emitterIndex];
     const { id: receiver } = actorList[receiverIndex];
     const { id: type } = practices[practiceIndex];
     const timestamp = date.toISOString();
@@ -86,7 +84,6 @@ const ObserveView = () => {
     axios
       .post('/api/practice', { emitter, receiver, type, timestamp })
       .then(() => {
-        setEmitterIndex(0);
         setReceiverIndex(0);
         setPracticeIndex(0);
         setDate(new Date());
@@ -162,25 +159,6 @@ const ObserveView = () => {
                 <Typography variant="h6" className={classes.heading}>
                   Información básica
                 </Typography>
-              </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
-                  <InputLabel id="emitter-select-label">Observador</InputLabel>
-                  <Select
-                    label="Observador"
-                    labelId="emitter-select-label"
-                    id="emitter-select"
-                    value={emitterIndex}
-                    onChange={handleEmitterChange}
-                    className={classes.dropdown}
-                  >
-                    {actorList.map(({ id, name: actorName }, index) => (
-                      <MenuItem value={index} key={id}>
-                        {actorName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <FormControl variant="outlined" className={classes.dropdown}>

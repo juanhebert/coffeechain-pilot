@@ -20,6 +20,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
 
+import { useLogin } from '../LoginContext';
+
 import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
@@ -53,7 +55,6 @@ const SellView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [sellerIndex, setSellerIndex] = useState(0);
   const [buyerIndex, setBuyerIndex] = useState(0);
   const [currencyIndex, setCurrencyIndex] = useState(0);
   const [price, setPrice] = useState('');
@@ -62,11 +63,9 @@ const SellView = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [login] = useLogin();
 
-  const handleSellerChange = event => {
-    const index = event.target.value;
-    setSellerIndex(index);
-  };
+  const { id: seller } = login;
 
   const handleBuyerChange = event => {
     const index = event.target.value;
@@ -81,7 +80,6 @@ const SellView = () => {
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
-    const { id: seller } = actorList[sellerIndex];
     const { id: buyer } = actorList[buyerIndex];
     const { id: currency } = currencies[currencyIndex];
     const priceInCents = Math.trunc(parseFloat(price) * 100);
@@ -90,7 +88,6 @@ const SellView = () => {
     axios
       .post('/api/sell', { seller, buyer, timestamp, inputs, price: priceInCents, currency })
       .then(() => {
-        setSellerIndex(0);
         setSelectedDate(new Date());
         setInputs([]);
         setShowError(false);
@@ -165,25 +162,6 @@ const SellView = () => {
                 <Typography variant="h6" className={classes.heading}>
                   Información básica
                 </Typography>
-              </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
-                  <InputLabel id="seller-select-label">Vendedor</InputLabel>
-                  <Select
-                    label="Vendedor"
-                    labelId="seller-select-label"
-                    id="seller-select"
-                    value={sellerIndex}
-                    onChange={handleSellerChange}
-                    className={classes.dropdown}
-                  >
-                    {actorList.map(({ id, name: actorName }, index) => (
-                      <MenuItem value={index} key={id}>
-                        {actorName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <FormControl variant="outlined" className={classes.dropdown}>
