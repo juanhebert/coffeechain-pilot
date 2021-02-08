@@ -80,7 +80,7 @@ const PendingTable = ({ items, showSaleFields, handleSaleConfirmation, handleShi
   );
 };
 
-const EventView = () => {
+const PendingView = () => {
   const classes = useStyles();
 
   const [pendingData, setPendingData] = useState({});
@@ -205,4 +205,4 @@ const EventView = () => {
   );
 };
 
-export default EventView;
+export default PendingView;
