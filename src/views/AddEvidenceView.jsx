@@ -58,6 +58,7 @@ const AddEvidenceView = () => {
   const { eventId, eventType } = useParams();
 
   const [date, setDate] = useState(new Date());
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -81,7 +82,7 @@ const AddEvidenceView = () => {
     if (isFile) {
       payload.append('file', file);
     }
-    payload.append('document', JSON.stringify({ emitter, eventId, eventType, timestamp, content }));
+    payload.append('document', JSON.stringify({ emitter, eventId, eventType, timestamp, title, content }));
     axios
       .post(isFile ? '/api/fileAttachment' : '/api/textAttachment', payload, formDataOpts)
       .then(() => {
@@ -89,6 +90,7 @@ const AddEvidenceView = () => {
         setShowError(false);
         setShowSuccess(true);
         setFile(null);
+        setTitle('');
         setContent('');
       })
       .catch(({ response }) => {
@@ -167,6 +169,14 @@ const AddEvidenceView = () => {
                     onChange={setDate}
                   />
                 </MuiPickersUtilsProvider>
+              </Grid>
+              <Grid item className={classes.fsAligned}>
+                <TextField
+                  variant="outlined"
+                  label="Título"
+                  value={title}
+                  onChange={event => setTitle(event.target.value)}
+                />
               </Grid>
               <Grid item className={classes.fsAligned}>
                 <FormControl className={classes.formControl}>

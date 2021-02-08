@@ -106,6 +106,7 @@ create table attachment(
     event text not null, -- references either transformation, sale, shipment, certificate or practice
     event_type text not null, -- type of event reference
     type text not null, -- one of FILE, TEXT
+    title text not null,
     content text not null, -- either raw text if TEXT, or filename if FILE
     emitter text not null references actor(id),
     timestamp text not null
