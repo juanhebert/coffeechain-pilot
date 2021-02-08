@@ -99,8 +99,6 @@ const AddEvidenceView = () => {
       });
   };
 
-  console.log(file);
-
   return (
     <Grid container className={classes.main} direction="column" alignItems="center" spacing={3}>
       <Grid item>
