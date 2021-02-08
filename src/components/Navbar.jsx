@@ -84,9 +84,11 @@ const Navbar = () => {
     <AppBar position="static">
       <Toolbar>
         <Container className={classes.navbarDisplayFlex}>
-          <IconButton edge="start" color="inherit" aria-label="home">
-            <img src={Logo} alt="logo" className={classes.logo} />
-          </IconButton>
+          <Link to="/">
+            <IconButton edge="start" color="inherit" aria-label="home">
+              <img src={Logo} alt="logo" className={classes.logo} />
+            </IconButton>
+          </Link>
           <List component="nav" aria-labelledby="main navigation" className={classes.navDisplayFlex}>
             {navLinks.map(({ title, path }) => (
               <Link to={path} key={title} className={classes.linkText}>
