@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
+import {
+  Button,
+  Collapse,
+  Grid,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { Close } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
@@ -71,6 +85,10 @@ const EventView = () => {
 
   const [pendingData, setPendingData] = useState({});
   const [login] = useLogin();
+  const [errorMsg, setErrorMsg] = useState();
+  const [successMsg, setSuccessMsg] = useState();
+  const [showError, setShowError] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const { id } = login;
 
@@ -82,19 +100,43 @@ const EventView = () => {
   }, [id]);
 
   const handleSaleConfirmation = sale => () => {
+    setShowSuccess(false);
+    setShowError(false);
     const timestamp = new Date().toISOString();
-    axios.post('/api/buy', { buyer: id, sale, timestamp }).then(async () => {
-      const { data } = await axios.get(`/api/pending/${id}`);
-      setPendingData(data);
-    });
+    axios
+      .post('/api/buy', { buyer: id, sale, timestamp })
+      .then(async () => {
+        const { data } = await axios.get(`/api/pending/${id}`);
+        setPendingData(data);
+        setSuccessMsg('Venta confirmada.');
+        setShowSuccess(true);
+      })
+      .catch(async () => {
+        const { data } = await axios.get(`/api/pending/${id}`);
+        setPendingData(data);
+        setErrorMsg('Vuelva a intentar.');
+        setShowError(true);
+      });
   };
 
   const handleShipmentConfirmation = shipment => () => {
+    setShowSuccess(false);
+    setShowError(false);
     const timestamp = new Date().toISOString();
-    axios.post('/api/receive', { recipient: id, shipment, timestamp }).then(async () => {
-      const { data } = await axios.get(`/api/pending/${id}`);
-      setPendingData(data);
-    });
+    axios
+      .post('/api/receive', { recipient: id, shipment, timestamp })
+      .then(async () => {
+        const { data } = await axios.get(`/api/pending/${id}`);
+        setPendingData(data);
+        setSuccessMsg('Envío confirmado.');
+        setShowSuccess(true);
+      })
+      .catch(async () => {
+        const { data } = await axios.get(`/api/pending/${id}`);
+        setPendingData(data);
+        setErrorMsg('Vuelva a intentar.');
+        setShowError(true);
+      });
   };
 
   const { pendingSales = [], pendingShipments = [] } = pendingData;
@@ -102,6 +144,46 @@ const EventView = () => {
   return (
     <div className={classes.main}>
       <Grid container spacing={2} direction="column" alignItems="center">
+        <Grid item>
+          <Collapse in={showError}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setShowError(false);
+                  }}
+                >
+                  <Close fontSize="inherit" />
+                </IconButton>
+              }
+              severity="error"
+            >
+              Error: {errorMsg}
+            </Alert>
+          </Collapse>
+          <Collapse in={showSuccess}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setShowSuccess(false);
+                  }}
+                >
+                  <Close fontSize="inherit" />
+                </IconButton>
+              }
+              severity="success"
+            >
+              {successMsg}
+            </Alert>
+          </Collapse>
+        </Grid>
         <Grid item>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
