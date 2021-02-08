@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
-import { FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import {
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Modal,
+  Paper,
+  Select,
+  TextField,
+} from '@material-ui/core';
 import { AddCircle, CropFree, Delete } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
+import QrReader from 'react-qr-reader';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   dropdown: {
     width: '100%',
   },
   inputMinWidth: {
     minWidth: 140,
+  },
+  modalPaper: {
+    padding: theme.spacing(2),
+    width: 450,
+    margin: '100px auto',
+    whiteSpace: 'pre-wrap',
   },
 }));
 
@@ -53,6 +70,7 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
   const [currentWeight, setCurrentWeight] = useState('0');
   const [varietyIndex, setVarietyIndex] = useState(0);
   const [typeIndex, setTypeIndex] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleAdd = () => {
     setProducts(prev => [
@@ -68,6 +86,13 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
     setCurrentWeight('0');
     setVarietyIndex(0);
     setTypeIndex(0);
+  };
+
+  const handleScan = data => {
+    if (data) {
+      setModalOpen(false);
+      setCurrentProduct(data);
+    }
   };
 
   const handleRemove = productIndex => () => setProducts(prev => prev.filter((elem, index) => index !== productIndex));
@@ -213,11 +238,16 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
           </IconButton>
         </Grid>
         <Grid item xs={1}>
-          <IconButton>
+          <IconButton onClick={() => setModalOpen(true)}>
             <CropFree />
           </IconButton>
         </Grid>
       </Grid>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Paper className={classes.modalPaper}>
+          <QrReader delay={300} onScan={handleScan} style={{ width: '100%' }} />
+        </Paper>
+      </Modal>
     </Grid>
   );
 };
