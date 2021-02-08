@@ -415,10 +415,67 @@ app.post('/api/practice', async (req, res) => {
   return res.send('OK');
 });
 
+const uploadMedia = async file => {
+  let extension;
+  switch (file.mimetype) {
+    case 'image/jpeg':
+      extension = '.jpg';
+      break;
+    case 'image/png':
+      extension = '.png';
+      break;
+    case 'application/pdf':
+      extension = '.pdf';
+      break;
+    default:
+      throw new Error('Evidence documents can only be images or PDF documents');
+  }
+
+  const evidenceDocumentName = short.generate() + extension;
+  const filepath = path.join('/uploads', evidenceDocumentName);
+
+  await file.mv(path.join(__dirname, '..', 'uploads', evidenceDocumentName));
+
+  return { filepath };
+};
+
+app.post('/api/fileAttachment', async (req, res) => {
+  const {
+    files: { file },
+    body: { document },
+  } = req;
+  const { emitter, eventId, eventType, timestamp } = JSON.parse(document);
+  const id = short.generate();
+
+  let filepath;
+  try {
+    ({ filepath } = await uploadMedia(file));
+  } catch (e) {
+    return res.status(400).send({ error: e.message });
+  }
+
+  try {
+    db.none(newAttachment, [id, eventId, eventType, 'FILE', filepath, emitter, timestamp]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Could not register in database' });
+  }
+
+  return res.send('OK');
+});
+
 app.post('/api/textAttachment', async (req, res) => {
-  const { eventId, eventType, content, emitter } = req.body;
-  // TODO: generate id, add timestamp to database schema for attachments
-  await db.none(newAttachment, ['id', eventId, eventType, 'TEXT', content, emitter]);
+  const {
+    body: { document },
+  } = req;
+  const { emitter, eventId, eventType, timestamp, content } = JSON.parse(document);
+  const id = short.generate();
+
+  try {
+    db.none(newAttachment, [id, eventId, eventType, 'TEXT', content, emitter, timestamp]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Could not register in database' });
+  }
+
   return res.send('OK');
 });
 

@@ -22,7 +22,7 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.2.0",
     "express": "^4.17.1",
-    "express-fileupload": "^1.2.0",
+    "express-fileupload": "^1.2.1",
     "fontsource-roboto": "^4.0.0",
     "http-proxy-middleware": "^1.0.0",
     "mocha": "^8.2.1",

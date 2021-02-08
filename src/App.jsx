@@ -10,6 +10,7 @@ import CertifyView from './views/CertifyView';
 import ObserveView from './views/ObserveView';
 import EventList from './views/EventList';
 import EventView from './views/EventView';
+import AddEvidenceView from './views/AddEvidenceView';
 import 'fontsource-roboto';
 import './App.css';
 
@@ -28,6 +29,7 @@ function App() {
             <Route exact path="/observe" component={ObserveView} />
             <Route exact path="/events" component={EventList} />
             <Route exact path="/events/:eventType/:eventId" component={EventView} />
+            <Route exact path="/evidence/:eventType/:eventId" component={AddEvidenceView} />
             {/* <Route component={NotFound} /> */}
           </Switch>
         </div>
