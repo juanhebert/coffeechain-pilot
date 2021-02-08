@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AppBar,
+  Avatar,
+  Button,
   Container,
   FormControl,
   IconButton,
-  Select,
   Toolbar,
   List,
   ListItem,
   ListItemText,
+  Menu,
   MenuItem,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { brown } from '@material-ui/core/colors';
 import axios from 'axios';
 
 import { useLogin } from '../LoginContext';
@@ -30,7 +33,7 @@ const navLinks = [
   { title: 'pendientes', path: '/pending' },
 ];
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   navbarDisplayFlex: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -47,13 +50,18 @@ const useStyles = makeStyles({
   logo: {
     width: '35px',
   },
-});
+  avatar: {
+    color: theme.palette.getContrastText(brown[800]),
+    backgroundColor: brown[800],
+  },
+}));
 
 const Navbar = () => {
   const classes = useStyles();
   const [actorList, setActorList] = useState([]);
   const [, setLogin] = useLogin();
   const [selectedActorIndex, setSelectedActorIndex] = useState(0);
+  const [anchorElement, setAnchorElement] = useState(null);
 
   useEffect(async () => {
     const { data } = await axios.get('/api/actor');
@@ -62,11 +70,13 @@ const Navbar = () => {
     setLogin(actors[0]);
   }, []);
 
-  const handleChange = event => {
-    const index = event.target.value;
+  const handleChange = index => () => {
     setSelectedActorIndex(index);
     setLogin(actorList[index]);
+    setAnchorElement(null);
   };
+
+  const handleClick = event => setAnchorElement(event.currentTarget);
 
   if (actorList.length === 0) return null;
 
@@ -86,19 +96,24 @@ const Navbar = () => {
               </Link>
             ))}
             <FormControl>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedActorIndex}
-                onChange={handleChange}
-                className={classes.dropdown}
+              <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                <Avatar variant="square" alt={actorList[selectedActorIndex].name} className={classes.avatar}>
+                  {actorList[selectedActorIndex].name[0]}
+                </Avatar>
+              </Button>
+              <Menu
+                anchorEl={anchorElement}
+                id="simple-menu"
+                keepMounted
+                open={!!anchorElement}
+                onClose={() => setAnchorElement(null)}
               >
                 {actorList.map(({ id, name: actorName }, index) => (
-                  <MenuItem value={index} key={id}>
+                  <MenuItem onClick={handleChange(index)} key={id}>
                     {actorName}
                   </MenuItem>
                 ))}
-              </Select>
+              </Menu>
             </FormControl>
           </List>
         </Container>
