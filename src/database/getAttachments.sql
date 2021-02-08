@@ -1,3 +1,3 @@
 select *
 from attachment
-where id = $1 and event_type = $2;
+where event = $1 and event_type = $2;

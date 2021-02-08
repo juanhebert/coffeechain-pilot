@@ -91,7 +91,7 @@ app.get('/api/transformation/:id', async (req, res) => {
 
   const inputs = await db.any(getTransformationInputs, [id]);
   const outputs = await db.any(getTransformationOutputs, [id]);
-  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+  const attachments = await db.any(getAttachments, [id, 'transformation']);
 
   return res.send({ basicInfo, inputs, outputs, attachments });
 });
@@ -107,7 +107,7 @@ app.get('/api/shipment/:id', async (req, res) => {
   }
 
   const inputs = await db.any(getShipmentInputs, [id]);
-  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+  const attachments = await db.any(getAttachments, [id, 'shipment']);
 
   return res.send({ basicInfo, inputs, attachments });
 });
@@ -123,7 +123,7 @@ app.get('/api/sale/:id', async (req, res) => {
   }
 
   const inputs = await db.any(getSaleInputs, [id]);
-  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+  const attachments = await db.any(getAttachments, [id, 'sale']);
 
   return res.send({ basicInfo, inputs, attachments });
 });
@@ -138,7 +138,7 @@ app.get('/api/certificate/:id', async (req, res) => {
     return res.status(400).send({ error: 'Certificate not found' });
   }
 
-  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+  const attachments = await db.any(getAttachments, [id, 'certificate']);
 
   return res.send({ basicInfo, attachments });
 });
@@ -153,7 +153,7 @@ app.get('/api/practice/:id', async (req, res) => {
     return res.status(400).send({ error: 'Practice not found' });
   }
 
-  const attachments = await db.any(getAttachments, [id, basicInfo.type]);
+  const attachments = await db.any(getAttachments, [id, 'practice']);
 
   return res.send({ basicInfo, attachments });
 });

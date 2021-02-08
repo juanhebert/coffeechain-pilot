@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Avatar, Grid, List, ListItem, ListItemAvatar, ListItemText, Paper, Typography } from '@material-ui/core';
+import { Link, useHistory, useParams } from 'react-router-dom';
+
+import {
+  Avatar,
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Modal,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { AccountCircle, Schedule, Note } from '@material-ui/icons';
@@ -19,12 +36,25 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     minWidth: 600,
   },
+  modalPaper: {
+    padding: theme.spacing(2),
+    width: 450,
+    margin: '100px auto',
+    whiteSpace: 'pre-wrap',
+  },
   heading: {
     marginBottom: 25,
   },
   avatarLogo: {
     height: '80%',
     width: '80%',
+  },
+  table: {
+    minWidth: 0, // TODO
+    marginBottom: 30,
+  },
+  tableHeadCell: {
+    fontWeight: 700,
   },
 }));
 
@@ -98,10 +128,50 @@ const InfoListItem = ({ value, title, isDate = false, isType = false, isCert = f
   );
 };
 
+const EvidenceTable = ({ items, handleSeeText }) => {
+  const classes = useStyles();
+
+  return (
+    <Table className={classes.table} aria-label="simple table">
+      <TableHead>
+        <TableRow>
+          <TableCell className={classes.tableHeadCell}>ID del documento</TableCell>
+          <TableCell className={classes.tableHeadCell}>Tipo de documento</TableCell>
+          <TableCell className={classes.tableHeadCell}>Fecha y hora</TableCell>
+          <TableCell className={classes.tableHeadCell}>Acceso</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {items.map(({ id, type, timestamp, content }) => (
+          <TableRow key={id}>
+            <TableCell component="th" scope="row">
+              {id}
+            </TableCell>
+            <TableCell>{type === 'TEXT' ? 'Texto' : 'Archivo'}</TableCell>
+            <TableCell>{new Date(timestamp).toLocaleString('es-CO', { timeZone: 'America/Bogota' })}</TableCell>
+            <TableCell>
+              {type === 'TEXT' ? (
+                <Button variant="contained" color="secondary" onClick={handleSeeText(content)}>
+                  Ver
+                </Button>
+              ) : (
+                <Button variant="contained" color="secondary" target="_blank" href={content}>
+                  Descargar
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
 const EventView = () => {
   const classes = useStyles();
 
   const [eventData, setEventData] = useState();
+  const [modalContent, setModalContent] = useState(null);
 
   const { eventId, eventType } = useParams();
   const history = useHistory();
@@ -115,11 +185,13 @@ const EventView = () => {
     }
   }, []);
 
+  const handleSeeText = text => () => setModalContent(text);
+
   if (!eventData) {
     return null;
   }
 
-  const { basicInfo, inputs, outputs } = eventData;
+  const { basicInfo, inputs, outputs, attachments } = eventData;
   const {
     emittername,
     receivername,
@@ -136,6 +208,9 @@ const EventView = () => {
 
   return (
     <div className={classes.main}>
+      <Modal open={!!modalContent} onClose={() => setModalContent(null)}>
+        <Paper className={classes.modalPaper}>{modalContent}</Paper>
+      </Modal>
       <Grid container spacing={2} direction="column" alignItems="center">
         <Grid item>
           <Paper className={classes.paper}>
@@ -187,6 +262,19 @@ const EventView = () => {
             </Paper>
           </Grid>
         )}
+        <Grid item>
+          <Paper className={classes.paper}>
+            <Typography variant="h5" className={classes.heading}>
+              Evidencia
+            </Typography>
+            <EvidenceTable items={attachments} handleSeeText={handleSeeText} />
+            <Link to={`/evidence/${eventType}/${eventId}`}>
+              <Button variant="contained" color="primary">
+                Registrar evidencia
+              </Button>
+            </Link>
+          </Paper>
+        </Grid>
       </Grid>
     </div>
   );
