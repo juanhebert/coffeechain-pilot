@@ -27,6 +27,7 @@ const navLinks = [
   { title: 'certificar', path: '/certify' },
   { title: 'observar', path: '/observe' },
   { title: 'eventos', path: '/events' },
+  { title: 'pendientes', path: '/pending' },
 ];
 
 const useStyles = makeStyles({
