@@ -137,17 +137,19 @@ const EvidenceTable = ({ items, handleSeeText }) => {
         <TableRow>
           <TableCell className={classes.tableHeadCell}>ID del documento</TableCell>
           <TableCell className={classes.tableHeadCell}>Tipo de documento</TableCell>
+          <TableCell className={classes.tableHeadCell}>Autor</TableCell>
           <TableCell className={classes.tableHeadCell}>Fecha y hora</TableCell>
           <TableCell className={classes.tableHeadCell}>Acceso</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {items.map(({ id, type, timestamp, content }) => (
+        {items.map(({ id, type, timestamp, content, emittername }) => (
           <TableRow key={id}>
             <TableCell component="th" scope="row">
               {id}
             </TableCell>
             <TableCell>{type === 'TEXT' ? 'Texto' : 'Archivo'}</TableCell>
+            <TableCell>{emittername}</TableCell>
             <TableCell>{new Date(timestamp).toLocaleString('es-CO', { timeZone: 'America/Bogota' })}</TableCell>
             <TableCell>
               {type === 'TEXT' ? (
