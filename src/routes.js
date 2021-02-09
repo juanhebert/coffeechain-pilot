@@ -39,7 +39,10 @@ const {
   getShipmentInputs,
 } = require('./database/queries');
 
-const cn = process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain';
+const cn = {
+  connectionString: process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain',
+  ssl: !!process.env.DATABASE_URL,
+};
 const db = pgp(cn);
 
 const app = express();
