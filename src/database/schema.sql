@@ -21,9 +21,24 @@ create table actor(
     id text primary key,
     name text not null,
     location text not null,
-    picture text, -- TODO: should this be here?
-    type text not null
+    type text not null,
+    picture text,
+    description text,
+    info json
 );
+
+/*
+The `info` field in the actor table takes different forms depending on the type of actor.
+If the actor is a farmer, this is the expected schema:
+
+{
+    minElevation, -> integer, minimum elevation at the farm (MASL)
+    maxElevation, -> integer, maximum elevation at the farm (MASL)
+    farmName, -> string, name of the farm
+}
+
+For now, the `info` field is ignored for other actor types
+*/
 
 create table product(
     id text primary key,
@@ -35,7 +50,9 @@ create table product(
 create table transformation(
     id text primary key,
     emitter text not null references actor(id),
-    timestamp text not null
+    timestamp text not null,
+    subtype text,
+    info json
 );
 
 create table transformation_input(
@@ -52,7 +69,8 @@ create table shipment(
     id text primary key,
     sender text not null references actor(id),
     recipient text not null references actor(id),
-    timestamp text not null
+    timestamp text not null,
+    info json
 );
 
 create table shipment_input(
@@ -62,7 +80,8 @@ create table shipment_input(
 
 create table shipment_confirmation(
     shipment text references shipment(id) primary key,
-    timestamp text not null
+    timestamp text not null,
+    info json
 );
 
 create table sale(
@@ -71,17 +90,20 @@ create table sale(
     buyer text not null references actor(id),
     price integer not null,
     currency text not null,
-    timestamp text not null
+    timestamp text not null,
+    info json
 );
 
 create table sale_input(
     sale text not null references sale(id),
-    product text not null references product(id)
+    product text not null references product(id),
+    info json
 );
 
 create table sale_confirmation(
     sale text references sale(id) primary key,
-    timestamp text not null
+    timestamp text not null,
+    info json
 );
 
 create table certificate(
