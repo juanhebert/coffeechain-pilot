@@ -144,7 +144,7 @@ const EvidenceTable = ({ items, handleSeeText }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {items.map(({ id, type, timestamp, title, content, emittername }) => (
+        {items.map(({ id, type, timestamp, title, description, filename, emittername }) => (
           <TableRow key={id}>
             <TableCell component="th" scope="row">
               {id}
@@ -155,13 +155,18 @@ const EvidenceTable = ({ items, handleSeeText }) => {
             <TableCell>{new Date(timestamp).toLocaleString('es-CO', { timeZone: 'America/Bogota' })}</TableCell>
             <TableCell>
               {type === 'TEXT' ? (
-                <Button variant="contained" color="secondary" onClick={handleSeeText(title, content)}>
+                <Button variant="contained" color="secondary" onClick={handleSeeText(title, description)}>
                   Ver
                 </Button>
               ) : (
-                <Button variant="contained" color="secondary" target="_blank" href={content}>
-                  Descargar
-                </Button>
+                <>
+                  <Button variant="contained" color="secondary" onClick={handleSeeText(title, description)}>
+                    Info
+                  </Button>
+                  <Button variant="contained" color="secondary" target="_blank" href={filename}>
+                    Descargar
+                  </Button>
+                </>
               )}
             </TableCell>
           </TableRow>

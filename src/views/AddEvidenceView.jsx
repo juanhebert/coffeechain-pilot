@@ -182,24 +182,22 @@ const AddEvidenceView = () => {
                 <FormControl className={classes.formControl}>
                   <FormControlLabel
                     control={<Checkbox checked={isFile} onChange={() => setIsFile(x => !x)} name="isDocument" />}
-                    label="Este documento es un archivo"
+                    label="Este adjunto es un archivo"
                   />
                 </FormControl>
               </Grid>
-              {!isFile && (
-                <Grid item className={classes.fsAligned}>
-                  <TextField
-                    label="Contenido"
-                    id="attachmentText"
-                    variant="outlined"
-                    multiline
-                    rows={7}
-                    className={classes.textField}
-                    value={content}
-                    onChange={handleContentChange}
-                  />
-                </Grid>
-              )}
+              <Grid item className={classes.fsAligned}>
+                <TextField
+                  label={isFile ? 'Descripción' : 'Contenido'}
+                  id="attachmentText"
+                  variant="outlined"
+                  multiline
+                  rows={7}
+                  className={classes.textField}
+                  value={content}
+                  onChange={handleContentChange}
+                />
+              </Grid>
               {isFile && (
                 <Grid item className={classes.fsAligned}>
                   <FormControl className={classes.formControl}>

@@ -107,7 +107,8 @@ create table attachment(
     event_type text not null, -- type of event reference
     type text not null, -- one of FILE, TEXT
     title text not null,
-    content text not null, -- either raw text if TEXT, or filename if FILE
+    description text, -- either attachment itself if TEXT, or description if FILE
+    filename text, -- filename if FILE, otherwise NULL
     emitter text not null references actor(id),
     timestamp text not null
 );

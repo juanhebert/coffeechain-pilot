@@ -447,7 +447,7 @@ app.post('/api/fileAttachment', async (req, res) => {
     files: { file },
     body: { document },
   } = req;
-  const { emitter, eventId, eventType, timestamp, title } = JSON.parse(document);
+  const { emitter, eventId, eventType, timestamp, title, content } = JSON.parse(document);
   const id = short.generate();
 
   let filepath;
@@ -458,7 +458,7 @@ app.post('/api/fileAttachment', async (req, res) => {
   }
 
   try {
-    db.none(newAttachment, [id, eventId, eventType, 'FILE', title, filepath, emitter, timestamp]);
+    await db.none(newAttachment, [id, eventId, eventType, 'FILE', title, content, filepath, emitter, timestamp]);
   } catch (e) {
     return res.status(400).send({ error: 'Could not register in database' });
   }
@@ -474,7 +474,7 @@ app.post('/api/textAttachment', async (req, res) => {
   const id = short.generate();
 
   try {
-    db.none(newAttachment, [id, eventId, eventType, 'TEXT', title, content, emitter, timestamp]);
+    await db.none(newAttachment, [id, eventId, eventType, 'TEXT', title, content, null, emitter, timestamp]);
   } catch (e) {
     return res.status(400).send({ error: 'Could not register in database' });
   }
