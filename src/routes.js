@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const bodyParser = require('body-parser');
 const express = require('express');
 const fileUpload = require('express-fileupload');
@@ -12,6 +13,7 @@ const {
   getActorPractices,
   getPendingSales,
   getPendingShipments,
+  getProduct,
   newTransformation,
   newTransformationInput,
   newTransformationOutput,
@@ -37,6 +39,11 @@ const {
   getSaleInputs,
   getShipment,
   getShipmentInputs,
+  getProductInputs,
+  getProductShipments,
+  getProductInitialTransformation,
+  getProductPayout,
+  getActor,
 } = require('./database/queries');
 
 const cn = {
@@ -172,6 +179,152 @@ app.get('/api/pending/:actorId', async (req, res) => {
   const pendingSales = await db.any(getPendingSales, [actorId]);
   const pendingShipments = await db.any(getPendingShipments, [actorId]);
   return res.send({ pendingSales, pendingShipments });
+});
+
+const aggregateObjectToArray = arr => Object.entries(arr).map(([id, rest]) => ({ id, ...rest }));
+
+const getProductProvenance = async (productId, info) => {
+  const { id, type, variety } = info;
+
+  let previous = [{ id, fraction: 1.0, type, variety }];
+  let current = await db.any(getProductInputs, [productId, 1]);
+  while (current.length !== 0) {
+    previous = current;
+    current = (
+      await Promise.all(current.map(({ id: currentId, fraction }) => db.any(getProductInputs, [currentId, fraction])))
+    ).flat();
+  }
+
+  // Turn ancestor array into object to filter out duplicates
+  const ancestorAggregate = {};
+  previous.forEach(({ id: currentId, fraction, ...rest }) => {
+    const { fraction: prevFraction = 0 } = ancestorAggregate[currentId] || {};
+    ancestorAggregate[currentId] = { fraction: prevFraction + fraction, ...rest };
+  });
+
+  const provenance = aggregateObjectToArray(ancestorAggregate);
+
+  return provenance;
+};
+
+const getFarmerInfo = async products => {
+  const dbProductInfo = await Promise.all(
+    products.map(async ({ id, fraction, timestamp, emitter }) => {
+      const payout = await db.oneOrNone(getProductPayout, [id]);
+      const actor = await db.one(getActor, [emitter]);
+      const certificates = await db.any(getActorCertificates, [emitter, timestamp]);
+      const practices = await db.any(getActorPractices, [emitter]);
+
+      return { fraction, actor, payout, certificates, practices };
+    }),
+  );
+
+  const producerAggregate = {};
+  dbProductInfo.forEach(({ fraction, actor, certificates, practices, payout }) => {
+    const { id, name, location, picture, type } = actor;
+    const { amount = 0, currency = 'USD' } = payout || {};
+    const { payout: prevPayout, contribution: prevContribution = 0 } = producerAggregate[id] || {};
+    const { amount: prevAmount = 0 } = prevPayout || {};
+
+    // OBS: Here, we make the assumption that all payouts for a single actor are in only one currency
+    producerAggregate[id] = {
+      name,
+      type,
+      location,
+      picture,
+      certificates,
+      practices,
+      contribution: prevContribution + fraction,
+      payout: {
+        amount: prevAmount + amount,
+        currency,
+      },
+    };
+  });
+
+  return aggregateObjectToArray(producerAggregate);
+};
+
+const getPracticeCertTallies = farmerInfo => {
+  const certificates = {};
+  const practices = {};
+  farmerInfo.forEach(({ certificates: certs, practices: practs, contribution }) => {
+    certs.forEach(({ type }) => {
+      const prev = certificates[type] || 0;
+      certificates[type] = prev + contribution;
+    });
+
+    practs.forEach(({ type }) => {
+      const prev = practices[type] || 0;
+      practices[type] = prev + contribution;
+    });
+  });
+
+  return { certificates, practices };
+};
+
+const getVarietyTally = products => {
+  const varieties = {};
+  products.forEach(({ fraction, variety }) => {
+    const prev = varieties[variety] || 0;
+    varieties[variety] = prev + fraction;
+  });
+
+  return varieties;
+};
+
+const getProductCustody = async productId => {
+  const initialTransformation = await db.one(getProductInitialTransformation, [productId]);
+  const shipments = await db.any(getProductShipments, [productId]);
+
+  const custody = [];
+
+  const { emitter, emittername, timestamp } = initialTransformation;
+  custody.push({
+    actor: emitter,
+    actorName: emittername,
+    start: timestamp,
+    end: shipments.length > 0 ? shipments[0].from : null,
+  });
+
+  shipments.forEach((shipment, i) => {
+    const { recipient, recipientname, to } = shipment;
+
+    let end = null;
+    if (i < shipments.length - 1) {
+      end = shipments[i + 1].to;
+    }
+
+    if (to) {
+      custody.push({
+        actor: recipient,
+        actorName: recipientname,
+        start: to,
+        end,
+      });
+    }
+  });
+
+  return custody;
+};
+
+app.get('/api/product/:productId', async (req, res) => {
+  const { productId } = req.params;
+
+  let info;
+  try {
+    info = await db.one(getProduct, [productId]);
+  } catch (e) {
+    return res.status(400).send({ error: 'Product not found.' });
+  }
+
+  const provenance = await getProductProvenance(productId, info);
+  const custody = await getProductCustody(productId);
+  const farmerInfo = await getFarmerInfo(provenance);
+  const pcTallies = getPracticeCertTallies(farmerInfo);
+  const varieties = getVarietyTally(provenance);
+
+  return res.send({ ...info, provenance, custody, farmerInfo, tallies: { varieties, ...pcTallies } });
 });
 
 app.post('/api/actor', async (req, res) => {

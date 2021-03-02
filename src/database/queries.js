@@ -8,6 +8,7 @@ const sql = file => {
 
 module.exports = {
   resetSchema: sql('schema.sql'),
+  getActor: sql('getActor.sql'),
   getActorCertificates: sql('getActorCertificates.sql'),
   getActorInventory: sql('getActorInventory.sql'),
   getActorOwnership: sql('getActorOwnership.sql'),
@@ -16,9 +17,14 @@ module.exports = {
   getAttachments: sql('getAttachments.sql'),
   getCertificate: sql('getCertificate.sql'),
   getEvents: sql('getEvents.sql'),
-  getPractice: sql('getPractice.sql'),
   getPendingSales: sql('getPendingSales.sql'),
   getPendingShipments: sql('getPendingShipments.sql'),
+  getPractice: sql('getPractice.sql'),
+  getProduct: sql('getProduct.sql'),
+  getProductInitialTransformation: sql('getProductInitialTransformation.sql'),
+  getProductInputs: sql('getProductInputs.sql'),
+  getProductPayout: sql('getProductPayout.sql'),
+  getProductShipments: sql('getProductShipments.sql'),
   getSale: sql('getSale.sql'),
   getSaleInputs: sql('getSaleInputs.sql'),
   getShipment: sql('getShipment.sql'),

@@ -14,7 +14,7 @@
         "prettier/prettier": [
             "error"
         ],
-        "react/prop-types": 0 // TODO: remove
+        "react/prop-types": 0
     },
     "env": {
         "browser": true,
