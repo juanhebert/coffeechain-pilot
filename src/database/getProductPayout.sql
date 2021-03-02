@@ -4,6 +4,8 @@ select
     (sub.weight::float / sum(p_in.weight)) * s.price as amount,
     s.currency
 from sale s
+join sale_confirmation s_conf
+on s_conf.sale = s.id
 join sale_input s_in
 on s_in.sale = s.id
 join product p_in
