@@ -1,4 +1,4 @@
-select p.*, a.id as emitter, a.name as emittername
+select p.*, a.id as emitter, a.name as emittername, t.timestamp
 from product p
 join transformation_output t_out
 on t_out.product = p.id

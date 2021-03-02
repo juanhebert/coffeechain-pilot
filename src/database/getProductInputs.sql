@@ -3,6 +3,7 @@ select
     (p_in.weight::float * $2) / t_sum.weight as fraction,
     p_in.type,
     p_in.variety,
+    a.name as emittername,
     t.emitter,
     t.timestamp
 from product p_in
@@ -24,4 +25,6 @@ join transformation_output p_t
 on p_t.product = p_in.id
 join transformation t
 on t.id = p_t.transformation
+join actor a
+on a.id = t.emitter
 where p_out.id = $1;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-// import { getString } from '../utils';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   table: {
@@ -35,7 +35,7 @@ const getString = id => {
   return strings[id];
 };
 
-const InventoryTable = ({ inventory }) => {
+const InventoryTable = ({ inventory, displayFarmer = false }) => {
   const classes = useStyles();
 
   return (
@@ -46,17 +46,19 @@ const InventoryTable = ({ inventory }) => {
           <TableCell className={classes.tableHeadCell}>Tipo</TableCell>
           <TableCell className={classes.tableHeadCell}>Peso&nbsp;(kg)</TableCell>
           <TableCell className={classes.tableHeadCell}>Variedad</TableCell>
+          {displayFarmer && <TableCell className={classes.tableHeadCell}>Productor</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
-        {inventory.map(({ id, type, weight, variety }) => (
+        {inventory.map(({ id, type, weight, variety, emittername }) => (
           <TableRow key={id}>
             <TableCell component="th" scope="row">
-              {id}
+              <Link to={`/product/${id}`}>{id}</Link>
             </TableCell>
             <TableCell>{getString(type)}</TableCell>
             <TableCell>{weight / 1000}</TableCell>
             <TableCell>{getString(variety)}</TableCell>
+            {displayFarmer && <TableCell>{emittername}</TableCell>}
           </TableRow>
         ))}
       </TableBody>

@@ -184,9 +184,9 @@ app.get('/api/pending/:actorId', async (req, res) => {
 const aggregateObjectToArray = arr => Object.entries(arr).map(([id, rest]) => ({ id, ...rest }));
 
 const getProductProvenance = async (productId, info) => {
-  const { id, type, variety } = info;
+  const { id, type, variety, emitter, emittername, timestamp } = info;
 
-  let previous = [{ id, fraction: 1.0, type, variety }];
+  let previous = [{ id, fraction: 1.0, type, variety, emitter, emittername, timestamp }];
   let current = await db.any(getProductInputs, [productId, 1]);
   while (current.length !== 0) {
     previous = current;
