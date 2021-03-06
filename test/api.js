@@ -19,12 +19,17 @@ describe('The API', () => {
   let actors;
 
   it('should be able to add actors to the database', async () => {
-    const actors = [
+    const inputActors = [
       {
         name: 'Ernesto Cárdenas',
         location: 'Titiribí, Colombia',
         picture: null,
         type: 'FARMER',
+        info: {
+          name: 'Finca Cafetera El Descanso',
+          area: 6.7,
+          elevation: 1870,
+        },
       },
       {
         name: 'Cooperativa de Caficultores de Antioquia',
@@ -59,7 +64,7 @@ describe('The API', () => {
     ];
 
     return Promise.all(
-      actors.map(async actor => {
+      inputActors.map(async actor => {
         const res = await chai.request(server).post('/api/actor').send(actor);
         expect(res).to.have.status(200);
       }),

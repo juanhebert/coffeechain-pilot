@@ -328,9 +328,9 @@ app.get('/api/product/:productId', async (req, res) => {
 });
 
 app.post('/api/actor', async (req, res) => {
-  const { name, location, picture, type } = req.body;
+  const { name, location, picture, type, info } = req.body;
   const id = short.generate();
-  await db.none(newActor, [id, name, location, picture, type]);
+  await db.none(newActor, [id, name, location, picture, type, info]);
   return res.send('OK');
 });
 

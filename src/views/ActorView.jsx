@@ -63,6 +63,18 @@ const actorTypeStrings = {
   EXPORTER: 'Exportador',
 };
 
+const actorInfoStrings = {
+  area: 'Área',
+  elevation: 'Elevación',
+  name: 'Nombre',
+};
+
+const actorInfoUnits = {
+  area: 'ha',
+  elevation: 'm s. n. m.',
+  name: '',
+};
+
 const ActorView = () => {
   const classes = useStyles();
 
@@ -85,7 +97,7 @@ const ActorView = () => {
   }, [selectedActor]);
 
   const { inventory = [], ownership = [], certificates = [] } = actorInfo || {};
-  const { name, location, type } = selectedActor || {};
+  const { name, location, type, info } = selectedActor || {};
 
   const handleChange = event => {
     const index = event.target.value;
@@ -154,6 +166,12 @@ const ActorView = () => {
                     <Grid item>
                       <b>Rol:</b> {actorTypeStrings[type]}
                     </Grid>
+                    {info &&
+                      Object.entries(info).map(([key, value]) => (
+                        <Grid item>
+                          <b>{actorInfoStrings[key]}:</b> {value} {actorInfoUnits[key]}
+                        </Grid>
+                      ))}
                   </Grid>
                   <Grid item />
                 </Grid>

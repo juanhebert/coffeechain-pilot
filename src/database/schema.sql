@@ -32,9 +32,9 @@ The `info` field in the actor table takes different forms depending on the type 
 If the actor is a farmer, this is the expected schema:
 
 {
-    minElevation, -> integer, minimum elevation at the farm (MASL)
-    maxElevation, -> integer, maximum elevation at the farm (MASL)
-    farmName, -> string, name of the farm
+    area, -> float, area of the farm in hectares
+    elevation, -> integer, average elevation at the farm (MASL)
+    name, -> string, name of the farm
 }
 
 For now, the `info` field is ignored for other actor types
