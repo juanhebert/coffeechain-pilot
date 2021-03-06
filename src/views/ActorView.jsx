@@ -4,6 +4,7 @@ import { deepPurple } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
+import { Link } from 'react-router-dom';
 import InventoryTable from '../components/InventoryTable';
 
 import UtzLogo from '../img/utz-certified-logo.svg';
@@ -127,20 +128,23 @@ const ActorView = () => {
                     <h3>{name}</h3>
                   </Grid>
                   <Grid item container justify="center" alignItems="center">
-                    {certificates.map(({ type: certType }) => (
-                      <Grid
-                        item
-                        container
-                        direction="column"
-                        alignItems="center"
-                        className={classes.certLogoItem}
-                        spacing={1}
-                        xs={1}
-                        key={certType}
-                      >
-                        <img src={getCertLogo(certType)} alt={certType} className={classes.certLogo} />
-                        <span className={classes.certName}>{certType}</span>
-                      </Grid>
+                    {certificates.map(({ type: certType, id: certId }) => (
+                      <Link to={`/events/certificate/${certId}`}>
+                        <Grid
+                          item
+                          container
+                          direction="column"
+                          alignItems="center"
+                          className={classes.certLogoItem}
+                          spacing={1}
+                          xs={1}
+                          key={certType}
+                        >
+                          <img src={getCertLogo(certType)} alt={certType} className={classes.certLogo} />
+
+                          <span className={classes.certName}>{certType}</span>
+                        </Grid>
+                      </Link>
                     ))}
                   </Grid>
                   <Grid item container spacing={1} direction="column" alignItems="center">
