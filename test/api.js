@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 describe('The API', () => {
   before(() => db.none(resetSchema));
 
-  let dbActors;
+  let actors;
 
   it('should be able to add actors to the database', async () => {
     const actors = [
@@ -39,6 +39,18 @@ describe('The API', () => {
         type: 'DRY_MILL',
       },
       {
+        name: 'Amacafé Exportación',
+        location: 'Medellín, Colombia',
+        picture: null,
+        type: 'EXPORTER',
+      },
+      {
+        name: 'Löfberg Import',
+        location: 'Viborg, Denmark',
+        picture: null,
+        type: 'IMPORTER',
+      },
+      {
         name: 'Löfberg',
         location: 'Karlstad, Sweden',
         picture: null,
@@ -56,14 +68,14 @@ describe('The API', () => {
 
   it('should be able to GET a list of all actors', async () => {
     const res = await chai.request(server).get('/api/actor');
-    const { actors } = res.body;
-    dbActors = actors.map(({ id }) => id);
+    const { actors: dbActors } = res.body;
+    actors = dbActors.map(({ id }) => id);
     expect(res).to.have.status(200);
-    expect(actors).to.have.length(4);
+    expect(dbActors).to.have.length(6);
   });
 
   it('should be able to create a product', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const transformRes = await chai
       .request(server)
@@ -88,7 +100,7 @@ describe('The API', () => {
   });
 
   it('should be able to transform products', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const transformRes = await chai
       .request(server)
@@ -114,7 +126,7 @@ describe('The API', () => {
   });
 
   it('should be able to ship products', async () => {
-    const [intermediary, cooperative, farmer] = dbActors;
+    const [, intermediary, cooperative, farmer] = actors;
 
     const firstShipRes = await chai
       .request(server)
@@ -169,7 +181,7 @@ describe('The API', () => {
   });
 
   it('should be able to sell products', async () => {
-    const [intermediary, cooperative, farmer] = dbActors;
+    const [, intermediary, cooperative, farmer] = actors;
 
     const firstSellRes = await chai
       .request(server)
@@ -228,7 +240,7 @@ describe('The API', () => {
   });
 
   it('should be able to certify an actor', async () => {
-    const [, certifier, certifiee] = dbActors;
+    const [, , certifier, certifiee] = actors;
 
     const res = await chai.request(server).post('/api/certificate').send({
       emitter: certifier,
@@ -246,7 +258,7 @@ describe('The API', () => {
   });
 
   it('should be able to record a sustanability practice', async () => {
-    const [certifiee, certifier] = dbActors;
+    const [, , certifier, certifiee] = actors;
 
     const res = await chai.request(server).post('/api/practice').send({
       emitter: certifier,
@@ -263,7 +275,7 @@ describe('The API', () => {
   });
 
   it('should be able to retrieve pending shipments and sales', async () => {
-    const [, recipient, farmer] = dbActors;
+    const [, , recipient, farmer] = actors;
 
     const resTransform = await chai
       .request(server)
@@ -308,7 +320,7 @@ describe('The API', () => {
   });
 
   it('should only let farmers create new products', async () => {
-    const actor = dbActors[0];
+    const actor = actors[0];
 
     const res = await chai
       .request(server)
@@ -325,7 +337,7 @@ describe('The API', () => {
   });
 
   it('should reject creation with wrong type', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const res = await chai
       .request(server)
@@ -342,7 +354,7 @@ describe('The API', () => {
   });
 
   it('should reject product creation with unspecified variety', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const res = await chai
       .request(server)
@@ -359,7 +371,7 @@ describe('The API', () => {
   });
 
   it('should reject product transformation with specified variety', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -376,7 +388,7 @@ describe('The API', () => {
   });
 
   it('should reject vacuous transformations', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const res = await chai.request(server).post('/api/transform').send({
       emitter: farmer,
@@ -390,7 +402,7 @@ describe('The API', () => {
   });
 
   it('should reject weightless outputs', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const res = await chai
       .request(server)
@@ -407,7 +419,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations when the in and out weight do not match', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -424,7 +436,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations that consume a weight loss input', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -441,7 +453,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations that consume an unexisting input', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -458,7 +470,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations that use existing product ids for their outputs', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -475,7 +487,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations with duplicated output ids', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -495,7 +507,7 @@ describe('The API', () => {
   });
 
   it('should reject transformations that consume inputs the actor does not have', async () => {
-    const farmer = dbActors[2];
+    const farmer = actors[3];
 
     const res = await chai
       .request(server)
@@ -513,7 +525,7 @@ describe('The API', () => {
 
   // By definition, covers also inputs that do not exist at all
   it("should reject shipment of products not in the sender's inventory", async () => {
-    const [, cooperative, farmer] = dbActors;
+    const [, , cooperative, farmer] = actors;
 
     const res = await chai
       .request(server)
@@ -530,7 +542,7 @@ describe('The API', () => {
   });
 
   it('should reject shipments with no inputs', async () => {
-    const [, cooperative, farmer] = dbActors;
+    const [, , cooperative, farmer] = actors;
 
     const res = await chai.request(server).post('/api/ship').send({
       sender: farmer,
@@ -544,8 +556,8 @@ describe('The API', () => {
   });
 
   it('should reject shipments with duplicated output ids', async () => {
-    const cooperative = dbActors[1];
-    const intermediary = dbActors[0];
+    const cooperative = actors[2];
+    const intermediary = actors[0];
 
     const res = await chai
       .request(server)
@@ -562,7 +574,7 @@ describe('The API', () => {
   });
 
   it('should reject shipments when sender and recipient are the same actor', async () => {
-    const cooperative = dbActors[1];
+    const cooperative = actors[2];
 
     const res = await chai
       .request(server)
@@ -580,7 +592,7 @@ describe('The API', () => {
 
   // By definition, covers also inputs that do not exist at all
   it("should reject sale of products not in the seller's ownership", async () => {
-    const [, cooperative, farmer] = dbActors;
+    const [, , cooperative, farmer] = actors;
 
     const res = await chai
       .request(server)
@@ -599,7 +611,7 @@ describe('The API', () => {
   });
 
   it('should reject shipments with no inputs', async () => {
-    const [, cooperative, farmer] = dbActors;
+    const [, , cooperative, farmer] = actors;
 
     const res = await chai.request(server).post('/api/sell').send({
       seller: farmer,
@@ -615,7 +627,7 @@ describe('The API', () => {
   });
 
   it('should reject empty certification validity intervals', async () => {
-    const [certifiee, certifier] = dbActors;
+    const [certifiee, certifier] = actors;
 
     const res = await chai.request(server).post('/api/certificate').send({
       emitter: certifier,

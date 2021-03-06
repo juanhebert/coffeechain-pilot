@@ -58,6 +58,8 @@ const actorTypeStrings = {
   DRY_MILL: 'Beneficio seco',
   WET_MILL: 'Beneficio húmedo',
   ROASTER: 'Tostador',
+  IMPORTER: 'Importador',
+  EXPORTER: 'Exportador',
 };
 
 const ActorView = () => {
