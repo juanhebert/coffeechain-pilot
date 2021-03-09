@@ -1,11 +1,6 @@
 select
     p_in.id,
-    (p_in.weight::float * $2) / t_sum.weight as fraction,
-    p_in.type,
-    p_in.variety,
-    a.name as emittername,
-    t.emitter,
-    t.timestamp
+    p_in.weight::float / t_sum.weight as fraction
 from product p_in
 join transformation_input t_in
 on t_in.product = p_in.id

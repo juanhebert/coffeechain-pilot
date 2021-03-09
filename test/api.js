@@ -646,5 +646,57 @@ describe('The API', () => {
     expect(error).to.equal('Invalid date range');
   });
 
-  // TODO: evidence framework tests
+  it('should compute fractions correctly in the provenance route', async () => {
+    const farmer = actors[3];
+
+    const firstTransformation = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [],
+        outputs: [
+          { productId: 'provenance-wp-1', weight: 25000, variety: 'CASTILLO', type: 'WET_PARCHMENT' },
+          { productId: 'provenance-wp-2', weight: 25000, variety: 'CASTILLO', type: 'WET_PARCHMENT' },
+          { productId: 'provenance-dp-1', weight: 25000, variety: 'CASTILLO', type: 'DRY_PARCHMENT' },
+        ],
+        timestamp: new Date().toISOString(),
+      });
+    expect(firstTransformation).to.have.status(200);
+
+    const secondTransformatinon = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [{ productId: 'provenance-wp-1' }, { productId: 'provenance-wp-2' }],
+        outputs: [
+          { productId: 'provenance-dp-2', weight: 25000, type: 'DRY_PARCHMENT' },
+          { productId: 'provenance-wl-1', weight: 25000, type: 'WEIGHT_LOSS' },
+        ],
+        timestamp: new Date().toISOString(),
+      });
+    expect(secondTransformatinon).to.have.status(200);
+
+    const thirdTransformation = await chai
+      .request(server)
+      .post('/api/transform')
+      .send({
+        emitter: farmer,
+        inputs: [{ productId: 'provenance-dp-1' }, { productId: 'provenance-dp-2' }],
+        outputs: [
+          { productId: 'provenance-green-1', weight: 40000, type: 'GREEN' },
+          { productId: 'provenance-wl-2', weight: 10000, type: 'WEIGHT_LOSS' },
+        ],
+        timestamp: new Date().toISOString(),
+      });
+    expect(thirdTransformation).to.have.status(200);
+
+    const res = await chai.request(server).get('/api/product/provenance-green-1');
+    const { provenance } = res.body;
+
+    const total = provenance.reduce((prev, { fraction }) => prev + fraction, 0);
+
+    expect(total).to.equal(1);
+  });
 });

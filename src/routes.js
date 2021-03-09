@@ -183,21 +183,25 @@ app.get('/api/pending/:actorId', async (req, res) => {
 
 const aggregateObjectToArray = arr => Object.entries(arr).map(([id, rest]) => ({ id, ...rest }));
 
-const getProductProvenance = async (productId, info) => {
-  const { id, type, variety, emitter, emittername, timestamp } = info;
+const getProductProvenance = async productId => {
+  const recurProvenance = async (currentId, factor = 1) => {
+    const inputs = await db.any(getProductInputs, [currentId]);
 
-  let previous = [{ id, fraction: 1.0, type, variety, emitter, emittername, timestamp }];
-  let current = await db.any(getProductInputs, [productId, 1]);
-  while (current.length !== 0) {
-    previous = current;
-    current = (
-      await Promise.all(current.map(({ id: currentId, fraction }) => db.any(getProductInputs, [currentId, fraction])))
-    ).flat();
-  }
+    if (inputs.length === 0) {
+      const { type, variety, emitter, emittername, timestamp } = await db.one(getProduct, [currentId]);
+      return [{ id: currentId, fraction: factor, type, variety, emitter, emittername, timestamp }];
+    }
+
+    const ancestors = await Promise.all(inputs.map(({ id, fraction }) => recurProvenance(id, fraction * factor)));
+
+    return ancestors.flat();
+  };
+
+  const ancestors = await recurProvenance(productId);
 
   // Turn ancestor array into object to filter out duplicates
   const ancestorAggregate = {};
-  previous.forEach(({ id: currentId, fraction, ...rest }) => {
+  ancestors.forEach(({ id: currentId, fraction, ...rest }) => {
     const { fraction: prevFraction = 0 } = ancestorAggregate[currentId] || {};
     ancestorAggregate[currentId] = { fraction: prevFraction + fraction, ...rest };
   });
