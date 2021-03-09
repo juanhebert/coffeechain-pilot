@@ -391,7 +391,16 @@ app.post('/api/transform', async (req, res) => {
   const outWeight = outputs.reduce((previous, current) => previous + current.weight, 0);
 
   if (inputs.length > 0 && inWeight !== outWeight) {
-    return res.status(400).send({ error: 'The cumulative weights of the inputs and outputs must be equal' });
+    if (outputs.some(({ type }) => type === 'WEIGHT_LOSS') || outWeight > inWeight) {
+      return res.status(400).send({ error: 'The cumulative weights of the inputs and outputs must be equal' });
+    }
+
+    outputs.push({
+      productId: short.generate(),
+      type: 'WEIGHT_LOSS',
+      weight: inWeight - outWeight,
+      variety: null,
+    });
   }
 
   if (outputs.some(({ weight }) => weight === 0)) {
@@ -423,6 +432,7 @@ app.post('/api/transform', async (req, res) => {
       await db.none(newTransformationOutput, [id, productId]);
     }),
   );
+
   return res.send('OK');
 });
 

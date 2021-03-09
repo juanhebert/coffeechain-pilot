@@ -34,7 +34,6 @@ const types = [
   { id: 'DRY_PARCHMENT', name: 'Pergamino seco' },
   { id: 'GREEN', name: 'Café verde' },
   { id: 'ROASTED', name: 'Café tostado' },
-  { id: 'WEIGHT_LOSS', name: 'Pérdidas' },
 ];
 
 const varieties = [

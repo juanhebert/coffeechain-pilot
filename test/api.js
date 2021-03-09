@@ -423,7 +423,7 @@ describe('The API', () => {
     expect(error).to.equal('Cannot produce weightless products.');
   });
 
-  it('should reject transformations when the in and out weight do not match', async () => {
+  it('should reject transformations when the in and out weight do not match (explicit weight loss)', async () => {
     const cooperative = actors[2];
 
     const res = await chai
@@ -432,7 +432,10 @@ describe('The API', () => {
       .send({
         emitter: cooperative,
         inputs: [{ productId: 'derived-product2' }],
-        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT' }],
+        outputs: [
+          { productId: 'test', weight: 2000, type: 'PARCHMENT' },
+          { productId: 'wl-x', weight: 0, type: 'WEIGHT_LOSS' },
+        ],
         timestamp: new Date().toISOString(),
       });
     const { error } = res.body;
@@ -670,10 +673,7 @@ describe('The API', () => {
       .send({
         emitter: farmer,
         inputs: [{ productId: 'provenance-wp-1' }, { productId: 'provenance-wp-2' }],
-        outputs: [
-          { productId: 'provenance-dp-2', weight: 25000, type: 'DRY_PARCHMENT' },
-          { productId: 'provenance-wl-1', weight: 25000, type: 'WEIGHT_LOSS' },
-        ],
+        outputs: [{ productId: 'provenance-dp-2', weight: 25000, type: 'DRY_PARCHMENT' }],
         timestamp: new Date().toISOString(),
       });
     expect(secondTransformatinon).to.have.status(200);
@@ -684,10 +684,7 @@ describe('The API', () => {
       .send({
         emitter: farmer,
         inputs: [{ productId: 'provenance-dp-1' }, { productId: 'provenance-dp-2' }],
-        outputs: [
-          { productId: 'provenance-green-1', weight: 40000, type: 'GREEN' },
-          { productId: 'provenance-wl-2', weight: 10000, type: 'WEIGHT_LOSS' },
-        ],
+        outputs: [{ productId: 'provenance-green-1', weight: 40000, type: 'GREEN' }],
         timestamp: new Date().toISOString(),
       });
     expect(thirdTransformation).to.have.status(200);
