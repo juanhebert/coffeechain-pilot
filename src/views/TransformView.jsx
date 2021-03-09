@@ -39,6 +39,8 @@ const TransformView = () => {
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [login] = useLogin();
+  const [partialIn, setPartialIn] = useState(false);
+  const [partialOut, setPartialOut] = useState(false);
 
   const { id: emitter } = login;
 
@@ -138,16 +140,26 @@ const TransformView = () => {
               <Typography variant="h6" className={classes.heading}>
                 Entradas
               </Typography>
-              <ProductInput products={inputs} setProducts={setInputs} />
+              <ProductInput products={inputs} setProducts={setInputs} setPartialField={setPartialIn} />
             </Grid>
             <Grid item>
               <Typography variant="h6" className={classes.heading}>
                 Salidas
               </Typography>
-              <ProductInput products={outputs} setProducts={setOutputs} weightAndVariety />
+              <ProductInput
+                products={outputs}
+                setProducts={setOutputs}
+                weightAndVariety
+                setPartialField={setPartialOut}
+              />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary" onClick={onSubmit}>
+              <Button
+                disabled={partialIn || partialOut || outputs.length === 0}
+                variant="contained"
+                color="primary"
+                onClick={onSubmit}
+              >
                 Enviar
               </Button>
             </Grid>

@@ -62,7 +62,7 @@ const strings = {
   MARAGOGIPE: 'Maragogipe',
 };
 
-const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
+const ProductInput = ({ products, setProducts, setPartialField, weightAndVariety = false }) => {
   const classes = useStyles();
 
   const [currentProduct, setCurrentProduct] = useState('');
@@ -85,6 +85,7 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
     setCurrentWeight('0');
     setVarietyIndex(0);
     setTypeIndex(0);
+    setPartialField(false);
   };
 
   const handleScan = data => {
@@ -110,6 +111,12 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
   const handleTypeChange = event => {
     const index = event.target.value;
     setTypeIndex(index);
+  };
+
+  const handleProductChange = event => {
+    const data = event.target.value;
+    setPartialField(data.length > 0);
+    setCurrentProduct(data);
   };
 
   return (
@@ -174,7 +181,7 @@ const ProductInput = ({ products, setProducts, weightAndVariety = false }) => {
             label="ID del producto"
             className={classes.inputMinWidth}
             value={currentProduct}
-            onChange={event => setCurrentProduct(event.target.value)}
+            onChange={handleProductChange}
             onKeyPress={handleKeyPress}
           />
         </Grid>
