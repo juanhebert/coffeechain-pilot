@@ -28,8 +28,18 @@ const actors = [
     type: 'DRY_MILL',
   },
   {
+    name: 'Almacafé Exportación',
+    location: 'Buenaventura, Colombia',
+    type: 'EXPORTER',
+  },
+  {
+    name: 'Löfberg Import',
+    location: 'Viborg, Danmark',
+    type: 'IMPORTER',
+  },
+  {
     name: 'Löfberg',
-    location: 'Karlstad, Sweden',
+    location: 'Karlstad, Sverige',
     type: 'ROASTER',
   },
 ];
