@@ -45,9 +45,9 @@ const runMigration = async () => {
   if (actors) {
     console.log('Adding actors to the database...');
     await Promise.all(
-      actors.map(async ({ name, location, type }) => {
+      actors.map(async ({ name, location, type, info }) => {
         const id = short.generate();
-        await db.none(newActor, [id, name, location, null, type]);
+        await db.none(newActor, [id, name, location, null, type, info]);
       }),
     );
   }
