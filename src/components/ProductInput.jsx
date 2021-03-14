@@ -30,10 +30,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const types = [
-  { id: 'WET_PARCHMENT', name: 'Pergamino húmedo' },
-  { id: 'DRY_PARCHMENT', name: 'Pergamino seco' },
-  { id: 'GREEN', name: 'Café verde' },
-  { id: 'ROASTED', name: 'Café tostado' },
+  { id: 'WET_PARCHMENT', name: 'P. húmedo' },
+  { id: 'DRY_PARCHMENT', name: 'P. seco' },
+  { id: 'GREEN', name: 'Verde' },
+  { id: 'ROASTED', name: 'Tostado' },
 ];
 
 const varieties = [
