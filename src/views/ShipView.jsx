@@ -51,6 +51,7 @@ const ShipView = () => {
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [login] = useLogin();
+  const [partial, setPartial] = useState(false);
 
   const { id: sender } = login;
 
@@ -180,10 +181,10 @@ const ShipView = () => {
               <Typography variant="h6" className={classes.heading}>
                 Productos a enviar
               </Typography>
-              <ProductInput products={inputs} setProducts={setInputs} />
+              <ProductInput products={inputs} setProducts={setInputs} setPartialField={setPartial} />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary" onClick={onSubmit}>
+              <Button disabled={partial || inputs.length === 0} variant="contained" color="primary" onClick={onSubmit}>
                 Enviar
               </Button>
             </Grid>
