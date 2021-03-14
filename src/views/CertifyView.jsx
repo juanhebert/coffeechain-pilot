@@ -23,16 +23,23 @@ import { useLogin } from '../LoginContext';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    marginTop: 15,
+    margin: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
+    maxWidth: 310,
     padding: theme.spacing(4),
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   heading: {
     marginBottom: 25,
   },
   dropdown: {
-    minWidth: 300,
+    width: 250,
   },
   fsAligned: {
     alignSelf: 'flex-start',
@@ -141,7 +148,7 @@ const CertifyView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item>
+      <Grid item className={classes.section}>
         <Paper className={classes.paper}>
           <Grid container direction="column" spacing={5}>
             <Grid item>

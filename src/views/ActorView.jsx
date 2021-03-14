@@ -14,10 +14,18 @@ import DefaultCertLogo from '../img/certificate.svg';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    margin: '50px 50px 0',
+    margin: '12px 0',
+    maxWidth: '100%',
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   paper: {
+    width: 310,
     padding: theme.spacing(2),
+    overflow: 'scroll',
   },
   avatar: {
     height: 40,
@@ -95,7 +103,7 @@ const ActorView = () => {
   const classes = useStyles();
 
   const [actorList, setActorList] = useState([]);
-  const [selectedActorIndex, setSelectedActorIndex] = useState('');
+  const [selectedActorIndex, setSelectedActorIndex] = useState(0);
   const [selectedActor, setSelectedActor] = useState();
   const [actorInfo, setActorInfo] = useState();
 
@@ -122,108 +130,101 @@ const ActorView = () => {
   };
 
   return (
-    <div className={classes.main}>
-      <Grid container spacing={3}>
-        <Grid item xs={3} container spacing={2} direction="column">
-          <Grid item>
-            <Paper className={classes.paper}>
-              <Typography variant="h5" className={classes.heading}>
-                Seleccionar actor
-              </Typography>
-              <FormControl>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectedActorIndex}
-                  onChange={handleChange}
-                  className={classes.dropdown}
-                >
-                  {actorList.map(({ id, name: actorName }, index) => (
-                    <MenuItem value={index} key={id}>
-                      {actorName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Paper>
-          </Grid>
-          {selectedActor && (
-            <Grid item>
-              <Paper className={classes.paper}>
-                <Grid container direction="column" alignItems="center" justify="space-around" spacing={3}>
-                  <Grid item container direction="column" alignItems="center">
-                    <Avatar className={classes.avatar}>{name[0]}</Avatar>
-                    <h3>{name}</h3>
-                  </Grid>
-                  <Grid item container justify="center" alignItems="center">
-                    {certificates.map(({ type: certType, id: certId }) => (
-                      <Link to={`/events/certificate/${certId}`}>
-                        <Grid
-                          item
-                          container
-                          direction="column"
-                          alignItems="center"
-                          className={classes.certLogoItem}
-                          spacing={1}
-                          xs={1}
-                          key={certType}
-                        >
-                          <img src={getCertLogo(certType)} alt={certType} className={classes.certLogo} />
-
-                          <span className={classes.certName}>{certType}</span>
-                        </Grid>
-                      </Link>
-                    ))}
-                  </Grid>
-                  <Grid item container spacing={1} direction="column" alignItems="center">
-                    <Grid item>
-                      <b>Ubicación:</b> {location}
-                    </Grid>
-                    <Grid item>
-                      <b>Plus Code:</b> {pluscode}
-                    </Grid>
-                    <Grid item>
-                      <b>Rol:</b> {actorTypeStrings[type]}
-                    </Grid>
-                    {info &&
-                      Object.entries(info).map(([key, value]) =>
-                        key === 'varieties' ? (
-                          <Grid item>
-                            <b>Variedades:</b> {value.map(({ variety }) => varietyStrings[variety]).join(', ')}
-                          </Grid>
-                        ) : (
-                          <Grid item>
-                            <b>{actorInfoStrings[key]}:</b> {value} {actorInfoUnits[key]}
-                          </Grid>
-                        ),
-                      )}
-                  </Grid>
-                  <Grid item />
-                </Grid>
-              </Paper>
-            </Grid>
-          )}
-        </Grid>
-        <Grid container item xs={9} spacing={2}>
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              <Typography variant="h5" className={classes.heading}>
-                Inventorio (custodia)
-              </Typography>
-              <InventoryTable inventory={inventory} />
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              <Typography variant="h5" className={classes.heading}>
-                Inventorio (propiedad)
-              </Typography>
-              <InventoryTable inventory={ownership} />
-            </Paper>
-          </Grid>
-        </Grid>
+    <Grid container spacing={3} className={classes.main} direction="column">
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Seleccionar actor
+          </Typography>
+          <FormControl>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selectedActorIndex}
+              onChange={handleChange}
+              className={classes.dropdown}
+            >
+              {actorList.map(({ id, name: actorName }, index) => (
+                <MenuItem value={index} key={id}>
+                  {actorName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Paper>
       </Grid>
-    </div>
+      {selectedActor && (
+        <Grid item className={classes.section}>
+          <Paper className={classes.paper}>
+            <Grid container direction="column" alignItems="center" justify="space-around" spacing={3}>
+              <Grid item container direction="column" alignItems="center">
+                <Avatar className={classes.avatar}>{name[0]}</Avatar>
+                <h3>{name}</h3>
+              </Grid>
+              <Grid item container justify="center" alignItems="center">
+                {certificates.map(({ type: certType, id: certId }) => (
+                  <Link to={`/events/certificate/${certId}`}>
+                    <Grid
+                      item
+                      container
+                      direction="column"
+                      alignItems="center"
+                      className={classes.certLogoItem}
+                      spacing={1}
+                      xs={1}
+                      key={certType}
+                    >
+                      <img src={getCertLogo(certType)} alt={certType} className={classes.certLogo} />
+                      <span className={classes.certName}>{certType}</span>
+                    </Grid>
+                  </Link>
+                ))}
+              </Grid>
+              <Grid item container spacing={1} direction="column" alignItems="center">
+                <Grid item>
+                  <b>Ubicación:</b> {location}
+                </Grid>
+                <Grid item>
+                  <b>Plus Code:</b> {pluscode}
+                </Grid>
+                <Grid item>
+                  <b>Rol:</b> {actorTypeStrings[type]}
+                </Grid>
+                {info &&
+                  Object.entries(info).map(([key, value]) =>
+                    key === 'varieties' ? (
+                      <Grid item>
+                        <b>Variedades:</b> {value.map(({ variety }) => varietyStrings[variety]).join(', ')}
+                      </Grid>
+                    ) : (
+                      <Grid item>
+                        <b>{actorInfoStrings[key]}:</b> {value} {actorInfoUnits[key]}
+                      </Grid>
+                    ),
+                  )}
+              </Grid>
+              <Grid item />
+            </Grid>
+          </Paper>
+        </Grid>
+      )}
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Inventorio (custodia)
+          </Typography>
+          <InventoryTable inventory={inventory} />
+        </Paper>
+      </Grid>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Inventorio (propiedad)
+          </Typography>
+          <InventoryTable inventory={ownership} />
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 

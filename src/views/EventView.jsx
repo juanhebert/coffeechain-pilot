@@ -31,15 +31,22 @@ import DefaultCertLogo from '../img/certificate.svg';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    margin: '50px 50px 0',
+    margin: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
     padding: theme.spacing(2),
-    minWidth: 600,
+    width: 310,
+    overflow: 'scroll',
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   modalPaper: {
     padding: theme.spacing(2),
-    width: 450,
+    width: 310,
     margin: '100px auto',
     whiteSpace: 'pre-wrap',
   },
@@ -237,7 +244,7 @@ const EventView = () => {
         </Paper>
       </Modal>
       <Grid container spacing={2} direction="column" alignItems="center">
-        <Grid item>
+        <Grid item className={classes.section}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Información básica
@@ -268,7 +275,7 @@ const EventView = () => {
           </Paper>
         </Grid>
         {inputs && (
-          <Grid item>
+          <Grid item className={classes.section}>
             <Paper className={classes.paper}>
               <Typography variant="h5" className={classes.heading}>
                 Entradas
@@ -278,7 +285,7 @@ const EventView = () => {
           </Grid>
         )}
         {outputs && (
-          <Grid item>
+          <Grid item className={classes.section}>
             <Paper className={classes.paper}>
               <Typography variant="h5" className={classes.heading}>
                 Salidas
@@ -287,7 +294,7 @@ const EventView = () => {
             </Paper>
           </Grid>
         )}
-        <Grid item>
+        <Grid item className={classes.section}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Evidencia

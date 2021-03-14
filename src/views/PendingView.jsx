@@ -22,11 +22,18 @@ import { useLogin } from '../LoginContext';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    margin: '50px 50px 0',
+    margin: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
     padding: theme.spacing(2),
-    minWidth: 600,
+    width: 310,
+    overflow: 'scroll',
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   heading: {
     marginBottom: 25,
@@ -184,7 +191,7 @@ const PendingView = () => {
             </Alert>
           </Collapse>
         </Grid>
-        <Grid item>
+        <Grid item className={classes.section}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Ventas pendientes
@@ -192,7 +199,7 @@ const PendingView = () => {
             <PendingTable items={pendingSales} showSaleFields handleSaleConfirmation={handleSaleConfirmation} />
           </Paper>
         </Grid>
-        <Grid item>
+        <Grid item className={classes.section}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Envíos pendientes

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import {
   AppBar,
   Avatar,
@@ -9,8 +9,6 @@ import {
   IconButton,
   Toolbar,
   List,
-  ListItem,
-  ListItemText,
   Menu,
   MenuItem,
 } from '@material-ui/core';
@@ -23,20 +21,22 @@ import { useLogin } from '../LoginContext';
 import Logo from '../img/logo-lightmode.svg';
 
 const navLinks = [
-  { title: 'actores', path: '/' },
-  { title: 'transformar', path: '/transform' },
-  { title: 'vender', path: '/sell' },
-  { title: 'mandar', path: '/ship' },
-  { title: 'certificar', path: '/certify' },
-  { title: 'observar', path: '/observe' },
-  { title: 'eventos', path: '/events' },
-  { title: 'pendientes', path: '/pending' },
+  { title: 'Inicio', path: '/' },
+  { title: 'Transformar', path: '/transform' },
+  { title: 'Vender', path: '/sell' },
+  { title: 'Mandar', path: '/ship' },
+  { title: 'Certificar', path: '/certify' },
+  { title: 'Observar', path: '/observe' },
+  { title: 'Eventos', path: '/events' },
+  { title: 'Pendientes', path: '/pending' },
 ];
 
 const useStyles = makeStyles(theme => ({
   navbarDisplayFlex: {
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0',
   },
   navDisplayFlex: {
     display: 'flex',
@@ -46,13 +46,18 @@ const useStyles = makeStyles(theme => ({
     textDecoration: 'none',
     textTransform: 'uppercase',
     color: 'white',
+    fontSize: '16px',
   },
   logo: {
     width: '35px',
+    margin: 'auto 10px',
   },
   avatar: {
     color: theme.palette.getContrastText(brown[800]),
     backgroundColor: brown[800],
+  },
+  pageButton: {
+    margin: 'auto 10px',
   },
 }));
 
@@ -62,6 +67,8 @@ const Navbar = () => {
   const [, setLogin] = useLogin();
   const [selectedActorIndex, setSelectedActorIndex] = useState(0);
   const [anchorElement, setAnchorElement] = useState(null);
+  const [pageMenuAnchorElement, setPageMenuAnchorElement] = useState(null);
+  const history = useHistory();
 
   useEffect(async () => {
     const { data } = await axios.get('/api/actor');
@@ -74,6 +81,12 @@ const Navbar = () => {
     setSelectedActorIndex(index);
     setLogin(actorList[index]);
     setAnchorElement(null);
+  };
+
+  const handlePagesMenuClick = event => setPageMenuAnchorElement(event.currentTarget);
+  const handlePagesMenuChange = path => () => {
+    setPageMenuAnchorElement(null);
+    history.push(path);
   };
 
   const handleClick = event => setAnchorElement(event.currentTarget);
@@ -90,13 +103,31 @@ const Navbar = () => {
             </IconButton>
           </Link>
           <List component="nav" aria-labelledby="main navigation" className={classes.navDisplayFlex}>
-            {navLinks.map(({ title, path }) => (
-              <Link to={path} key={title} className={classes.linkText}>
-                <ListItem button>
-                  <ListItemText primary={title} />
-                </ListItem>
-              </Link>
-            ))}
+            <FormControl>
+              <Button
+                className={classes.pageButton}
+                aria-controls="simple-menu"
+                aria-haspopup="true"
+                onClick={handlePagesMenuClick}
+                variant="contained"
+                color="secondary"
+              >
+                <span className={classes.linkText}>Menú</span>
+              </Button>
+              <Menu
+                anchorEl={pageMenuAnchorElement}
+                id="simple-menu"
+                keepMounted
+                open={!!pageMenuAnchorElement}
+                onClose={() => setPageMenuAnchorElement(null)}
+              >
+                {navLinks.map(({ title, path }) => (
+                  <MenuItem onClick={handlePagesMenuChange(path)} key={path}>
+                    {title}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </FormControl>
             <FormControl>
               <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
                 <Avatar variant="square" alt={actorList[selectedActorIndex].name} className={classes.avatar}>

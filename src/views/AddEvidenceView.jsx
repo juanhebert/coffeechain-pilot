@@ -24,22 +24,29 @@ import { useLogin } from '../LoginContext';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    marginTop: 15,
+    margin: '12px 0',
+    maxWidth: '100%',
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   paper: {
+    width: 310,
     padding: theme.spacing(4),
   },
   heading: {
     marginBottom: 25,
   },
   dropdown: {
-    minWidth: 300,
+    maxWidth: 250,
   },
   fsAligned: {
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
   },
   textField: {
-    minWidth: 300,
+    maxWidth: 250,
   },
   input: {
     display: 'none',
@@ -143,7 +150,7 @@ const AddEvidenceView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item>
+      <Grid item className={classes.section}>
         <Paper className={classes.paper}>
           <Grid container direction="column" spacing={5}>
             <Grid item>
@@ -179,14 +186,6 @@ const AddEvidenceView = () => {
                 />
               </Grid>
               <Grid item className={classes.fsAligned}>
-                <FormControl className={classes.formControl}>
-                  <FormControlLabel
-                    control={<Checkbox checked={isFile} onChange={() => setIsFile(x => !x)} name="isDocument" />}
-                    label="Este adjunto es un archivo"
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item className={classes.fsAligned}>
                 <TextField
                   label={isFile ? 'Descripción' : 'Contenido'}
                   id="attachmentText"
@@ -197,6 +196,14 @@ const AddEvidenceView = () => {
                   value={content}
                   onChange={handleContentChange}
                 />
+              </Grid>
+              <Grid item className={classes.fsAligned}>
+                <FormControl className={classes.formControl}>
+                  <FormControlLabel
+                    control={<Checkbox checked={isFile} onChange={() => setIsFile(x => !x)} name="isDocument" />}
+                    label="Este adjunto es un archivo"
+                  />
+                </FormControl>
               </Grid>
               {isFile && (
                 <Grid item className={classes.fsAligned}>

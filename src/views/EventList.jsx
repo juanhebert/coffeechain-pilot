@@ -6,13 +6,15 @@ import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } f
 
 const useStyles = makeStyles(theme => ({
   main: {
-    margin: '50px 50px 0',
+    margin: '12px 0',
     display: 'flex',
     justifyContent: 'center',
+    maxWidth: '100%',
   },
   paper: {
+    width: 310,
     padding: theme.spacing(2),
-    maxWidth: 800,
+    overflow: 'scroll',
   },
   tableHeadCell: {
     fontWeight: 700,
