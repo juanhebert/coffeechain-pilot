@@ -248,7 +248,17 @@ const ProductView = () => {
     return null;
   }
 
-  const { weight, type, variety, emittername, timestamp, provenance, tallies, farmerInfo, custody } = productData;
+  const {
+    weight,
+    type,
+    varieties: variety,
+    emittername,
+    timestamp,
+    provenance,
+    tallies,
+    farmerInfo,
+    custody,
+  } = productData;
   const { varieties, certificates, practices } = tallies;
 
   const varietyPieData = Object.entries(varieties).map(([name, portion]) => ({ name, value: portion * 100 }));

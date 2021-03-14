@@ -188,8 +188,8 @@ const getProductProvenance = async productId => {
     const inputs = await db.any(getProductInputs, [currentId]);
 
     if (inputs.length === 0) {
-      const { type, variety, emitter, emittername, timestamp } = await db.one(getProduct, [currentId]);
-      return [{ id: currentId, fraction: factor, type, variety, emitter, emittername, timestamp }];
+      const { type, varieties, emitter, emittername, timestamp } = await db.one(getProduct, [currentId]);
+      return [{ id: currentId, fraction: factor, type, varieties, emitter, emittername, timestamp }];
     }
 
     const ancestors = await Promise.all(inputs.map(({ id, fraction }) => recurProvenance(id, fraction * factor)));
@@ -269,9 +269,11 @@ const getPracticeCertTallies = farmerInfo => {
 
 const getVarietyTally = products => {
   const varieties = {};
-  products.forEach(({ fraction, variety }) => {
-    const prev = varieties[variety] || 0;
-    varieties[variety] = prev + fraction;
+  products.forEach(({ fraction, varieties: productVarieties }) => {
+    JSON.parse(productVarieties).forEach(({ name, amount }) => {
+      const prev = varieties[name] || 0;
+      varieties[name] = prev + fraction * amount;
+    });
   });
 
   return varieties;
@@ -354,7 +356,7 @@ app.post('/api/transform', async (req, res) => {
       return res.status(400).send({ error: 'Only farmers can create new products' });
     }
 
-    if (outputs.some(({ variety }) => !variety)) {
+    if (outputs.some(({ varieties }) => !varieties)) {
       return res.status(400).send({ error: 'The variety field is mandatory for the initial creation of new products' });
     }
 
@@ -363,7 +365,7 @@ app.post('/api/transform', async (req, res) => {
     }
   }
 
-  if (inputs.length > 0 && outputs.some(({ variety }) => !!variety)) {
+  if (inputs.length > 0 && outputs.some(({ varieties }) => !!varieties)) {
     return res
       .status(400)
       .send({ error: 'The variety field is only supported for the initial creation of new products' });
@@ -399,7 +401,7 @@ app.post('/api/transform', async (req, res) => {
       productId: short.generate(),
       type: 'WEIGHT_LOSS',
       weight: inWeight - outWeight,
-      variety: null,
+      varieties: null,
     });
   }
 
@@ -427,8 +429,8 @@ app.post('/api/transform', async (req, res) => {
   await db.none(newTransformation, [id, emitter, timestamp]);
   await Promise.all(inputs.map(({ productId }) => db.none(newTransformationInput, [id, productId])));
   await Promise.all(
-    outputs.map(async ({ productId, weight, type, variety }) => {
-      await db.none(newProduct, [productId, weight, type, variety]);
+    outputs.map(async ({ productId, weight, type, varieties }) => {
+      await db.none(newProduct, [productId, weight, type, varieties && JSON.stringify(varieties)]);
       await db.none(newTransformationOutput, [id, productId]);
     }),
   );

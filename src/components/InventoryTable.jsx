@@ -30,6 +30,8 @@ const getString = id => {
     TABI: 'Tabí',
     BORBON: 'Borbón',
     MARAGOGIPE: 'Maragogipe',
+    DOSMIL: 'Variedad 2000',
+    CATIMORO: 'Catimoro',
   };
 
   return strings[id];
@@ -50,14 +52,20 @@ const InventoryTable = ({ inventory, displayFarmer = false }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {inventory.map(({ id, type, weight, variety, emittername }) => (
+        {inventory.map(({ id, type, weight, varieties, emittername }) => (
           <TableRow key={id}>
             <TableCell component="th" scope="row">
               <Link to={`/product/${id}`}>{id}</Link>
             </TableCell>
             <TableCell>{getString(type)}</TableCell>
             <TableCell>{weight / 1000}</TableCell>
-            <TableCell>{getString(variety)}</TableCell>
+            <TableCell>
+              {varieties
+                ? JSON.parse(varieties)
+                    .map(({ name }) => getString(name))
+                    .join(', ')
+                : 'N/A'}
+            </TableCell>
             {displayFarmer && <TableCell>{emittername}</TableCell>}
           </TableRow>
         ))}

@@ -42,15 +42,25 @@ const TransformView = () => {
   const [partialIn, setPartialIn] = useState(false);
   const [partialOut, setPartialOut] = useState(false);
 
-  const { id: emitter } = login;
+  const { id: emitter, info } = login;
+  const { varieties = [] } = info || {};
+
+  const total = varieties.reduce((prev, { amount }) => prev + amount, 0);
+  const computedVariety = varieties.map(({ variety, amount }) => ({ name: variety, amount: amount / total }));
 
   const onSubmit = () => {
     setShowError(false);
     setShowSuccess(false);
     const timestamp = selectedDate.toISOString();
 
+    const queryOutputs = outputs.map(({ variety, ...rest }) => ({
+      ...rest,
+      // eslint-disable-next-line no-nested-ternary
+      varieties: variety ? [{ name: variety, amount: 1 }] : inputs.length === 0 ? computedVariety : null,
+    }));
+
     axios
-      .post('/api/transform', { emitter, timestamp, inputs, outputs })
+      .post('/api/transform', { emitter, timestamp, inputs, outputs: queryOutputs })
       .then(() => {
         setSelectedDate(new Date());
         setInputs([]);

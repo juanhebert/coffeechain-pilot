@@ -37,7 +37,7 @@ const types = [
 ];
 
 const varieties = [
-  { id: null, name: 'n/a' },
+  { id: null, name: 'Por defecto' },
   { id: 'BORBON', name: 'Borbón' },
   { id: 'CASTILLO', name: 'Castillo' },
   { id: 'CATURRA', name: 'Caturra' },
@@ -148,7 +148,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
               </Grid>
               <Grid item xs={2}>
                 <TextField
-                  value={variety ? strings[variety] : 'n/a'}
+                  value={variety ? strings[variety] : 'Por defecto'}
                   variant="outlined"
                   InputProps={{
                     readOnly: true,
