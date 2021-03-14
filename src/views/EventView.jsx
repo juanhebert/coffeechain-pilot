@@ -26,6 +26,7 @@ import InventoryTable from '../components/InventoryTable';
 
 import UtzLogo from '../img/utz-certified-logo.svg';
 import FloLogo from '../img/flocert-logo.svg';
+import FourCLogo from '../img/four-c-logo.svg';
 import DefaultCertLogo from '../img/certificate.svg';
 
 const useStyles = makeStyles(theme => ({
@@ -69,6 +70,7 @@ const eventTypeTranslations = {
 const certificateTypeTranslations = {
   FLO: 'Fair Trade Organization (FLO)',
   UTZ: 'UTZ Certified',
+  '4C': '4C',
   WTS: 'Tratamiento de aguas mieles',
   ST: 'Árboles de sombra',
   RE: 'Uso de energías renovelables',
@@ -77,6 +79,11 @@ const certificateTypeTranslations = {
   PI: 'Uso de insecticidas',
   PN: 'No se usan pesticidas',
   MM: 'Manejo responsable de productos químicos',
+  CM: 'Compostaje',
+  CC: 'Cultivos de cobertora/alternativos',
+  HM: 'Medidor de humedad',
+  GR: 'Germinador',
+  AB: 'Camas africanas',
 };
 
 const getCertLogo = certType => {
@@ -85,6 +92,8 @@ const getCertLogo = certType => {
       return FloLogo;
     case 'UTZ':
       return UtzLogo;
+    case '4C':
+      return FourCLogo;
     default:
       return DefaultCertLogo;
   }

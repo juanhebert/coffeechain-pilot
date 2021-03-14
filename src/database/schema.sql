@@ -21,6 +21,7 @@ create table actor(
     id text primary key,
     name text not null,
     location text not null,
+    pluscode text not null,
     type text not null,
     picture text,
     description text,
@@ -35,6 +36,7 @@ If the actor is a farmer, this is the expected schema:
     area, -> float, area of the farm in hectares
     elevation, -> integer, average elevation at the farm (MASL)
     name, -> string, name of the farm
+    varieties, -> [{ variety: string, amount: number }], array of available varieties on the farm
 }
 
 For now, the `info` field is ignored for other actor types

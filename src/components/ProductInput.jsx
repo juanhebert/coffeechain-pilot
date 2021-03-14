@@ -60,9 +60,11 @@ const strings = {
   TABI: 'Tabí',
   BORBON: 'Borbón',
   MARAGOGIPE: 'Maragogipe',
+  DOSMIL: 'Variedad 2000',
+  CATIMORO: 'Catimoro',
 };
 
-const ProductInput = ({ products, setProducts, setPartialField, weightAndVariety = false }) => {
+const ProductInput = ({ products, setProducts, setPartialField = () => {}, weightAndVariety = false }) => {
   const classes = useStyles();
 
   const [currentProduct, setCurrentProduct] = useState('');

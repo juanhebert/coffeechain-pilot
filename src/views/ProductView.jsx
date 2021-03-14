@@ -63,6 +63,7 @@ const useStyles = makeStyles(theme => ({
 const certificateTypeTranslations = {
   FLO: 'Fair Trade Organization (FLO)',
   UTZ: 'UTZ Certified',
+  '4C': '4C',
   WTS: 'Tratamiento de aguas mieles',
   ST: 'Árboles de sombra',
   RE: 'Uso de energías renovelables',
@@ -71,6 +72,11 @@ const certificateTypeTranslations = {
   PI: 'Uso de insecticidas',
   PN: 'No se usan pesticidas',
   MM: 'Manejo responsable de productos químicos',
+  CM: 'Compostaje',
+  CC: 'Cultivos de cobertora/alternativos',
+  HM: 'Medidor de humedad',
+  GR: 'Germinador',
+  AB: 'Camas africanas',
 };
 
 const productTypeVarieties = {
@@ -86,6 +92,8 @@ const productTypeVarieties = {
   TABI: 'Tabí',
   BORBON: 'Borbón',
   MARAGOGIPE: 'Maragogipe',
+  DOSMIL: 'Variedad 2000',
+  CATIMORO: 'Catimoro',
 };
 
 const getCertLogo = certType => {

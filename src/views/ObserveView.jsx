@@ -48,6 +48,11 @@ const practices = [
   { id: 'PI', name: 'Uso de insecticidas' },
   { id: 'PN', name: 'No se usan pesticidas' },
   { id: 'MM', name: 'Manejo responsable de productos químicos' },
+  { id: 'CM', name: 'Compostaje' },
+  { id: 'CC', name: 'Cultivos de cobertora/alternativos' },
+  { id: 'HM', name: 'Medidor de humedad' },
+  { id: 'GR', name: 'Germinador' },
+  { id: 'AB', name: 'Camas africanas' },
 ];
 
 const ObserveView = () => {

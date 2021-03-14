@@ -9,6 +9,7 @@ import InventoryTable from '../components/InventoryTable';
 
 import UtzLogo from '../img/utz-certified-logo.svg';
 import FloLogo from '../img/flocert-logo.svg';
+import FourCLogo from '../img/four-c-logo.svg';
 import DefaultCertLogo from '../img/certificate.svg';
 
 const useStyles = makeStyles(theme => ({
@@ -48,6 +49,8 @@ const getCertLogo = certType => {
       return FloLogo;
     case 'UTZ':
       return UtzLogo;
+    case '4C':
+      return FourCLogo;
     default:
       return DefaultCertLogo;
   }
@@ -61,10 +64,11 @@ const actorTypeStrings = {
   ROASTER: 'Tostador',
   IMPORTER: 'Importador',
   EXPORTER: 'Exportador',
+  PURCHASING_POINT: 'Punto de compra',
 };
 
 const actorInfoStrings = {
-  area: 'Área',
+  area: 'Área de la finca',
   elevation: 'Elevación',
   name: 'Nombre',
 };
@@ -73,6 +77,18 @@ const actorInfoUnits = {
   area: 'ha',
   elevation: 'm s. n. m.',
   name: '',
+};
+
+const varietyStrings = {
+  CENICAFE: 'Cenicafé uno',
+  CASTILLO: 'Castillo',
+  CATURRA: 'Caturra',
+  TIPICA: 'Típica',
+  TABI: 'Tabí',
+  BORBON: 'Borbón',
+  MARAGOGIPE: 'Maragogipe',
+  DOSMIL: 'Variedad 2000',
+  CATIMORO: 'Catimoro',
 };
 
 const ActorView = () => {
@@ -97,7 +113,7 @@ const ActorView = () => {
   }, [selectedActor]);
 
   const { inventory = [], ownership = [], certificates = [] } = actorInfo || {};
-  const { name, location, type, info } = selectedActor || {};
+  const { name, location, pluscode, type, info } = selectedActor || {};
 
   const handleChange = event => {
     const index = event.target.value;
@@ -164,14 +180,23 @@ const ActorView = () => {
                       <b>Ubicación:</b> {location}
                     </Grid>
                     <Grid item>
+                      <b>Plus Code:</b> {pluscode}
+                    </Grid>
+                    <Grid item>
                       <b>Rol:</b> {actorTypeStrings[type]}
                     </Grid>
                     {info &&
-                      Object.entries(info).map(([key, value]) => (
-                        <Grid item>
-                          <b>{actorInfoStrings[key]}:</b> {value} {actorInfoUnits[key]}
-                        </Grid>
-                      ))}
+                      Object.entries(info).map(([key, value]) =>
+                        key === 'varieties' ? (
+                          <Grid item>
+                            <b>Variedades:</b> {value.map(({ variety }) => varietyStrings[variety]).join(', ')}
+                          </Grid>
+                        ) : (
+                          <Grid item>
+                            <b>{actorInfoStrings[key]}:</b> {value} {actorInfoUnits[key]}
+                          </Grid>
+                        ),
+                      )}
                   </Grid>
                   <Grid item />
                 </Grid>
