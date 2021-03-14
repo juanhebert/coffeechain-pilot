@@ -23,6 +23,7 @@ describe('The API', () => {
       {
         name: 'Ernesto Cárdenas',
         location: 'Titiribí, Colombia',
+        pluscode: '',
         picture: null,
         type: 'FARMER',
         info: {
@@ -34,30 +35,35 @@ describe('The API', () => {
       {
         name: 'Cooperativa de Caficultores de Antioquia',
         location: 'Medellín, Colombia',
+        pluscode: '',
         picture: null,
         type: 'COOPERATIVE',
       },
       {
         name: 'Almacafé',
         location: 'Medellín, Colombia',
+        pluscode: '',
         picture: null,
         type: 'DRY_MILL',
       },
       {
         name: 'Amacafé Exportación',
         location: 'Medellín, Colombia',
+        pluscode: '',
         picture: null,
         type: 'EXPORTER',
       },
       {
         name: 'Löfberg Import',
         location: 'Viborg, Denmark',
+        pluscode: '',
         picture: null,
         type: 'IMPORTER',
       },
       {
         name: 'Löfberg',
         location: 'Karlstad, Sweden',
+        pluscode: '',
         picture: null,
         type: 'ROASTER',
       },
@@ -89,8 +95,18 @@ describe('The API', () => {
         emitter: farmer,
         inputs: [],
         outputs: [
-          { productId: 'initial-product1', weight: 50000, type: 'DRY_PARCHMENT', variety: 'CASTILLO' },
-          { productId: 'initial-product2', weight: 50000, type: 'DRY_PARCHMENT', variety: 'CASTILLO' },
+          {
+            productId: 'initial-product1',
+            weight: 50000,
+            type: 'DRY_PARCHMENT',
+            varieties: [{ name: 'CASTILLO', amount: 1 }],
+          },
+          {
+            productId: 'initial-product2',
+            weight: 50000,
+            type: 'DRY_PARCHMENT',
+            varieties: [{ name: 'CASTILLO', amount: 1 }],
+          },
         ],
         timestamp: new Date().toISOString(),
       });
@@ -288,7 +304,14 @@ describe('The API', () => {
       .send({
         emitter: farmer,
         inputs: [],
-        outputs: [{ productId: 'test-product', weight: 1000, type: 'DRY_PARCHMENT', variety: 'CASTILLO' }],
+        outputs: [
+          {
+            productId: 'test-product',
+            weight: 1000,
+            type: 'DRY_PARCHMENT',
+            varieties: [{ name: 'CASTILLO', amount: 1 }],
+          },
+        ],
         timestamp: new Date().toISOString(),
       });
     expect(resTransform).to.have.status(200);
@@ -350,7 +373,9 @@ describe('The API', () => {
       .send({
         emitter: farmer,
         inputs: [],
-        outputs: [{ productId: 'test', weight: 20000, type: 'ROASTED_COFFEE', variety: 'CATURRA' }],
+        outputs: [
+          { productId: 'test', weight: 20000, type: 'ROASTED_COFFEE', varieties: [{ name: 'CATURRA', amount: 1 }] },
+        ],
         timestamp: new Date().toISOString(),
       });
     const { error } = res.body;
@@ -384,7 +409,7 @@ describe('The API', () => {
       .send({
         emitter: cooperative,
         inputs: [{ productId: 'derived-product2' }],
-        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT', variety: 'CATURRA' }],
+        outputs: [{ productId: 'test', weight: 2000, type: 'PARCHMENT', varieties: [{ name: 'CATURRA', amount: 1 }] }],
         timestamp: new Date().toISOString(),
       });
     const { error } = res.body;
@@ -415,7 +440,7 @@ describe('The API', () => {
       .send({
         emitter: farmer,
         inputs: [],
-        outputs: [{ productId: 'test', weight: 0, type: 'DRY_PARCHMENT', variety: 'CATURRA' }],
+        outputs: [{ productId: 'test', weight: 0, type: 'DRY_PARCHMENT', varieties: [{ name: 'CATURRA', amount: 1 }] }],
         timestamp: new Date().toISOString(),
       });
     const { error } = res.body;
@@ -659,9 +684,28 @@ describe('The API', () => {
         emitter: farmer,
         inputs: [],
         outputs: [
-          { productId: 'provenance-wp-1', weight: 25000, variety: 'CASTILLO', type: 'WET_PARCHMENT' },
-          { productId: 'provenance-wp-2', weight: 25000, variety: 'CASTILLO', type: 'WET_PARCHMENT' },
-          { productId: 'provenance-dp-1', weight: 25000, variety: 'CASTILLO', type: 'DRY_PARCHMENT' },
+          {
+            productId: 'provenance-wp-1',
+            weight: 25000,
+            varieties: [{ name: 'CASTILLO', amount: 1 }],
+            type: 'WET_PARCHMENT',
+          },
+          {
+            productId: 'provenance-wp-2',
+            weight: 25000,
+            varieties: [{ name: 'CENICAFE', amount: 1 }],
+            type: 'WET_PARCHMENT',
+          },
+          {
+            productId: 'provenance-dp-1',
+            weight: 25000,
+            varieties: [
+              { name: 'CATURRA', amount: 0.6 },
+              { name: 'MARAGOGIPE', amount: 0.3 },
+              { name: 'DOSMIL', amount: 0.1 },
+            ],
+            type: 'DRY_PARCHMENT',
+          },
         ],
         timestamp: new Date().toISOString(),
       });
