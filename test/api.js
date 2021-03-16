@@ -28,8 +28,10 @@ describe('The API', () => {
         type: 'FARMER',
         info: {
           name: 'Finca Cafetera El Descanso',
-          area: 6.7,
-          elevation: 1870,
+          varieties: [
+            { variety: 'CASTILLO', amount: 2 },
+            { variety: 'CENICAFE', amount: 1 },
+          ],
         },
       },
       {
