@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   modalPaper: {
     padding: theme.spacing(2),
-    width: 450,
+    width: 300,
     margin: '100px auto',
     whiteSpace: 'pre-wrap',
   },
