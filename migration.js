@@ -3,7 +3,10 @@ const yargs = require('yargs');
 const pgPromise = require('pg-promise');
 const short = require('short-uuid');
 
-const cn = process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain';
+const cn = {
+  connectionString: process.env.DATABASE_URL || 'postgres://coffeechain:coffeechain-local@localhost:5432/coffeechain',
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : null,
+};
 const pgp = pgPromise();
 const db = pgp(cn);
 
