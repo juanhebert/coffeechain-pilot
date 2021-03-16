@@ -24,16 +24,23 @@ import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    marginTop: 15,
+    marginTop: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
+    maxWidth: 310,
     padding: theme.spacing(4),
   },
   heading: {
     marginBottom: 25,
   },
   dropdown: {
-    minWidth: 300,
+    width: 250,
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   fsAligned: {
     alignSelf: 'flex-start',

@@ -26,16 +26,23 @@ import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    marginTop: 15,
+    marginTop: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
+    maxWidth: 310,
     padding: theme.spacing(4),
   },
   heading: {
     marginBottom: 25,
   },
-  dropdown: {
-    minWidth: 300,
+  input: {
+    width: 250,
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   fsAligned: {
     alignSelf: 'flex-start',
@@ -150,7 +157,7 @@ const SellView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item>
+      <Grid item className={classes.section}>
         <Paper className={classes.paper}>
           <Grid container direction="column" spacing={5}>
             <Grid item>
@@ -165,7 +172,7 @@ const SellView = () => {
                 </Typography>
               </Grid>
               <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
+                <FormControl variant="outlined" className={classes.input}>
                   <InputLabel id="buyer-select-label">Comprador</InputLabel>
                   <Select
                     label="Comprador"
@@ -173,7 +180,7 @@ const SellView = () => {
                     id="buyer-select"
                     value={buyerIndex}
                     onChange={handleBuyerChange}
-                    className={classes.dropdown}
+                    className={classes.input}
                   >
                     {actorList.map(({ id, name: actorName }, index) => (
                       <MenuItem value={index} key={id}>
@@ -187,7 +194,7 @@ const SellView = () => {
                 <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
                   <DateTimePicker
                     format="d MMMM yyyy 'a' 'las' hh:mm a"
-                    className={classes.dropdown}
+                    className={classes.input}
                     variant="inline"
                     inputVariant="outlined"
                     label="Fecha"
@@ -205,7 +212,7 @@ const SellView = () => {
                 />
               </Grid>
               <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
+                <FormControl variant="outlined" className={classes.input}>
                   <InputLabel id="currency-select-label">Divisa</InputLabel>
                   <Select
                     label="Divisa"
@@ -213,7 +220,7 @@ const SellView = () => {
                     id="currency-select"
                     value={currencyIndex}
                     onChange={handleCurrencyChange}
-                    className={classes.dropdown}
+                    className={classes.input}
                   >
                     {currencies.map(({ id, name: currencyName }, index) => (
                       <MenuItem value={index} key={id}>

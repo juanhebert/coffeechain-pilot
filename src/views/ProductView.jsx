@@ -29,11 +29,12 @@ import DefaultCertLogo from '../img/certificate.svg';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    margin: '50px 50px 0',
+    margin: '12px 0',
   },
   paper: {
     padding: theme.spacing(2),
-    minWidth: 600,
+    maxWidth: 310,
+    overflow: 'scroll',
   },
   modalPaper: {
     padding: theme.spacing(2),
@@ -57,6 +58,11 @@ const useStyles = makeStyles(theme => ({
   },
   pie: {
     margin: 'auto',
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
 }));
 
@@ -272,83 +278,81 @@ const ProductView = () => {
   }));
 
   return (
-    <div className={classes.main}>
-      <Grid container spacing={2} direction="column" alignItems="center">
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Información básica
-            </Typography>
-            <List className={classes.root}>
-              <InfoListItem value={productId} isType title="ID" />
-              <InfoListItem value={productTypeVarieties[type]} title="Tipo" />
-              <InfoListItem value={weight / 1000} title="Peso (kg)" />
-              <InfoListItem value={productTypeVarieties[variety]} title="Variedad" />
-              <InfoListItem value={emittername} title="Emisor" />
-              <InfoListItem value={timestamp} isDate title="Fecha y hora de producción" />
-            </List>
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Proveniencia
-            </Typography>
-            <InventoryTable
-              inventory={provenance.map(({ fraction, ...rest }) => ({ weight: weight * fraction, ...rest }))}
-              displayFarmer
-            />
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Custodia
-            </Typography>
-            <CustodyTable items={custody} />
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Composición
-            </Typography>
-            <PieChart width={500} height={500} className={classes.pie}>
-              <Pie data={varietyPieData} nameKey="name" dataKey="value" cx="50%" cy="50%" fill="#8884d8" label>
-                {varietyPieData.map(({ name }, i) => (
-                  <Cell key={`cell-${name}`} fill={pieColors[i % pieColors.length]} />
-                ))}
-              </Pie>
-              <Legend />
-            </PieChart>
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Caficultores
-            </Typography>
-            <ProducerTable items={farmerInfo} />
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Certificados
-            </Typography>
-            <PracticeTable isCert items={certificateItems} />
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.heading}>
-              Practicas de sostenibilidad
-            </Typography>
-            <PracticeTable items={practiceItems} />
-          </Paper>
-        </Grid>
+    <Grid container spacing={2} direction="column" alignItems="center" className={classes.main}>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Información básica
+          </Typography>
+          <List className={classes.root}>
+            <InfoListItem value={productId} isType title="ID" />
+            <InfoListItem value={productTypeVarieties[type]} title="Tipo" />
+            <InfoListItem value={weight / 1000} title="Peso (kg)" />
+            <InfoListItem value={productTypeVarieties[variety]} title="Variedad" />
+            <InfoListItem value={emittername} title="Emisor" />
+            <InfoListItem value={timestamp} isDate title="Fecha y hora de producción" />
+          </List>
+        </Paper>
       </Grid>
-    </div>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Proveniencia
+          </Typography>
+          <InventoryTable
+            inventory={provenance.map(({ fraction, ...rest }) => ({ weight: weight * fraction, ...rest }))}
+            displayFarmer
+          />
+        </Paper>
+      </Grid>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Custodia
+          </Typography>
+          <CustodyTable items={custody} />
+        </Paper>
+      </Grid>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Composición
+          </Typography>
+          <PieChart width={300} height={300} className={classes.pie}>
+            <Pie data={varietyPieData} nameKey="name" dataKey="value" cx="50%" cy="50%" fill="#8884d8" label>
+              {varietyPieData.map(({ name }, i) => (
+                <Cell key={`cell-${name}`} fill={pieColors[i % pieColors.length]} />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+        </Paper>
+      </Grid>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Caficultores
+          </Typography>
+          <ProducerTable items={farmerInfo} />
+        </Paper>
+      </Grid>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Certificados
+          </Typography>
+          <PracticeTable isCert items={certificateItems} />
+        </Paper>
+      </Grid>
+      <Grid item className={classes.section}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" className={classes.heading}>
+            Practicas de sostenibilidad
+          </Typography>
+          <PracticeTable items={practiceItems} />
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 

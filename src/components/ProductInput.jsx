@@ -2,24 +2,34 @@ import React, { useState } from 'react';
 import {
   FormControl,
   Grid,
-  IconButton,
   InputLabel,
   MenuItem,
   Modal,
   Paper,
   Select,
   TextField,
+  Button,
+  ButtonGroup,
+  List,
+  ListItem,
+  ListItemText,
 } from '@material-ui/core';
-import { AddCircle, CropFree, Delete } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import QrReader from 'react-qr-reader';
+import ClearIcon from '@material-ui/icons/Clear';
 
 const useStyles = makeStyles(theme => ({
-  dropdown: {
-    width: '100%',
+  deleteButton: {
+    height: 25,
+    width: 25,
+    minWidth: 25,
+    marginLeft: 12,
   },
-  inputMinWidth: {
-    minWidth: 140,
+  input: {
+    width: 250,
+  },
+  list: {
+    width: 250,
   },
   modalPaper: {
     padding: theme.spacing(2),
@@ -48,8 +58,8 @@ const varieties = [
 ];
 
 const strings = {
-  WET_PARCHMENT: 'Pergamino húmedo',
-  DRY_PARCHMENT: 'Pergamino seco',
+  WET_PARCHMENT: 'P. húmedo',
+  DRY_PARCHMENT: 'P. seco',
   GREEN: 'Café verde',
   ROASTED: 'Café tostado',
   WEIGHT_LOSS: 'Pérdidas',
@@ -123,74 +133,39 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
 
   return (
     <Grid container className={classes.main} direction="column" spacing={1}>
-      {products.map(({ productId, variety, weight, type }, index) => (
-        <Grid container item key={productId} spacing={1} justify="flex-start">
-          <Grid item xs={4}>
-            <TextField
-              value={productId}
-              variant="outlined"
-              className={classes.inputMinWidth}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          {weightAndVariety ? (
-            <>
-              <Grid item xs={2}>
-                <TextField
-                  value={strings[type]}
-                  variant="outlined"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <TextField
-                  value={variety ? strings[variety] : 'Por defecto'}
-                  variant="outlined"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <TextField
-                  value={weight / 1000}
-                  variant="outlined"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
-            </>
-          ) : (
-            <Grid item xs={6} />
-          )}
-          <Grid item xs={1}>
-            <IconButton onClick={handleRemove(index)}>
-              <Delete />
-            </IconButton>
-          </Grid>
-          <Grid item xs={1} />
-        </Grid>
-      ))}
-      <Grid container item spacing={1} justify="flex-start">
-        <Grid item xs={4}>
+      <Grid container item justify="center">
+        <List className={classes.list}>
+          {products.map(({ productId, variety, weight, type }, index) => (
+            <ListItem divider>
+              <ListItemText
+                primary={
+                  weightAndVariety
+                    ? `${productId}: ${weight / 1000} kg (${strings[type]}, ${strings[variety] || 'var. n/a'})`
+                    : productId
+                }
+              />
+              <Button onClick={handleRemove(index)} className={classes.deleteButton}>
+                <ClearIcon />
+              </Button>
+            </ListItem>
+          ))}
+        </List>
+      </Grid>
+      <Grid container item spacing={1} justify="flex-start" direction="column">
+        <Grid item>
           <TextField
             variant="outlined"
             label="ID del producto"
-            className={classes.inputMinWidth}
+            className={classes.input}
             value={currentProduct}
             onChange={handleProductChange}
             onKeyPress={handleKeyPress}
           />
         </Grid>
-        {weightAndVariety ? (
+        {weightAndVariety && (
           <>
-            <Grid item xs={2}>
-              <FormControl className={classes.dropdown} variant="outlined">
+            <Grid item>
+              <FormControl className={classes.input} variant="outlined">
                 <InputLabel id="type-select-label">Tipo</InputLabel>
                 <Select
                   label="Tipo"
@@ -198,7 +173,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                   id="type-select"
                   value={typeIndex}
                   onChange={handleTypeChange}
-                  className={classes.dropdown}
+                  className={classes.input}
                 >
                   {types.map(({ id, name: typeName }, index) => (
                     <MenuItem value={index} key={id}>
@@ -208,8 +183,8 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={2}>
-              <FormControl className={classes.dropdown} variant="outlined">
+            <Grid item>
+              <FormControl className={classes.input} variant="outlined">
                 <InputLabel id="variety-select-label">Variedad</InputLabel>
                 <Select
                   label="Variedad"
@@ -217,7 +192,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                   id="variety-select"
                   value={varietyIndex}
                   onChange={handleVarietyChange}
-                  className={classes.dropdown}
+                  className={classes.input}
                 >
                   {varieties.map(({ id, name: varietyName }, index) => (
                     <MenuItem value={index} key={id}>
@@ -227,28 +202,25 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item>
               <TextField
                 variant="outlined"
                 label="Peso (kg)"
                 value={currentWeight}
+                className={classes.input}
                 onChange={event => setCurrentWeight(event.target.value)}
                 onKeyPress={handleKeyPress}
               />
             </Grid>
           </>
-        ) : (
-          <Grid item xs={6} />
         )}
-        <Grid item xs={1}>
-          <IconButton onClick={handleAdd}>
-            <AddCircle />
-          </IconButton>
-        </Grid>
-        <Grid item xs={1}>
-          <IconButton onClick={() => setModalOpen(true)}>
-            <CropFree />
-          </IconButton>
+        <Grid item container justify="center">
+          <Grid item>
+            <ButtonGroup color="secondary" variant="contained" aria-label="outlined primary button group">
+              <Button onClick={handleAdd}>Añadir</Button>
+              <Button onClick={() => setModalOpen(true)}>Escanéar QR</Button>
+            </ButtonGroup>
+          </Grid>
         </Grid>
       </Grid>
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>

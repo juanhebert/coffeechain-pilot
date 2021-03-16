@@ -13,16 +13,23 @@ import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    marginTop: 15,
+    marginTop: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
     padding: theme.spacing(4),
+    maxWidth: 310,
   },
   heading: {
     marginBottom: 25,
   },
   dropdown: {
-    minWidth: 300,
+    minWidth: 250,
+  },
+  section: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '100%',
   },
   fsAligned: {
     alignSelf: 'flex-start',
@@ -118,7 +125,7 @@ const TransformView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item>
+      <Grid item classes={classes.section}>
         <Paper className={classes.paper}>
           <Grid container direction="column" spacing={5}>
             <Grid item>
