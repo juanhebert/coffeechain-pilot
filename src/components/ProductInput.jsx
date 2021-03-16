@@ -218,7 +218,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
           <Grid item>
             <ButtonGroup color="secondary" variant="contained" aria-label="outlined primary button group">
               <Button onClick={handleAdd}>Añadir</Button>
-              <Button onClick={() => setModalOpen(true)}>Escanéar QR</Button>
+              <Button onClick={() => setModalOpen(true)}>Escanear QR</Button>
             </ButtonGroup>
           </Grid>
         </Grid>
