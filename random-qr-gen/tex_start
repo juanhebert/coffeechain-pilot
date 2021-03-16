@@ -1,0 +1,5 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\graphicspath{ {./codes/} }
+\setlength{\parindent}{0pt}
+\begin{document}
