@@ -174,7 +174,7 @@ const PracticeTable = ({ items, isCert = false }) => {
             <TableCell component="th" scope="row">
               {certificateTypeTranslations[name]}
             </TableCell>
-            <TableCell>{`${percentage}%`}</TableCell>
+            <TableCell>{`${percentage.toFixed(2)}%`}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -201,8 +201,8 @@ const ProducerTable = ({ items }) => {
             <TableCell component="th" scope="row">
               {name}
             </TableCell>
-            <TableCell>{`${contribution * 100}%`}</TableCell>
-            <TableCell>{`${currency} ${amount}`}</TableCell>
+            <TableCell>{`${(contribution * 100).toFixed(2)}%`}</TableCell>
+            <TableCell>{`${currency} ${amount.toFixed(2)}`}</TableCell>
             <TableCell>{location}</TableCell>
           </TableRow>
         ))}
@@ -242,6 +242,44 @@ const CustodyTable = ({ items }) => {
 
 const pieColors = ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600'];
 
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
+
+const largestRemainderRound = entries => {
+  const getRemainder = number => {
+    const remainder = number - Math.floor(number);
+    return remainder.toFixed(4);
+  };
+
+  const result = entries
+    .map(({ name, value }, index) => ({
+      name,
+      value: Math.floor(value),
+      remainder: getRemainder(value),
+      index,
+    }))
+    .sort((a, b) => b.remainder - a.remainder);
+
+  const lowerSum = result.reduce((sum, current) => sum + current.value, 0);
+
+  const delta = 100 - lowerSum;
+  for (let i = 0; i < delta; i += 1) {
+    result[i].value += 1;
+  }
+
+  return result.sort((a, b) => a.index - b.index).map(({ name, value }) => ({ name, value }));
+};
+
 const ProductView = () => {
   const classes = useStyles();
 
@@ -274,7 +312,9 @@ const ProductView = () => {
   } = productData;
   const { varieties, certificates, practices } = tallies;
 
-  const varietyPieData = Object.entries(varieties).map(([name, portion]) => ({ name, value: portion * 100 }));
+  const varietyPieData = largestRemainderRound(
+    Object.entries(varieties).map(([name, portion]) => ({ name, value: portion * 100 })),
+  );
   const certificateItems = Object.entries(certificates).map(([name, percentage]) => ({
     name,
     percentage: percentage * 100,
@@ -283,6 +323,8 @@ const ProductView = () => {
     name,
     percentage: percentage * 100,
   }));
+
+  console.log(varietyPieData);
 
   return (
     <Grid container spacing={3} direction="column" alignItems="center" className={classes.main}>
@@ -325,8 +367,17 @@ const ProductView = () => {
           <Typography variant="h5" className={classes.heading}>
             Composición
           </Typography>
-          <PieChart width={280} height={280} className={classes.pie}>
-            <Pie data={varietyPieData} nameKey="name" dataKey="value" cx="50%" cy="50%" fill="#8884d8" label>
+          <PieChart width={300} height={300} className={classes.pie}>
+            <Pie
+              data={varietyPieData}
+              nameKey="name"
+              dataKey="value"
+              cx="50%"
+              cy="50%"
+              fill="#8884d8"
+              labelLine={false}
+              label={renderCustomizedLabel}
+            >
               {varietyPieData.map(({ name }, i) => (
                 <Cell key={`cell-${name}`} fill={pieColors[i % pieColors.length]} />
               ))}
