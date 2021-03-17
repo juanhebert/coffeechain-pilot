@@ -119,6 +119,12 @@ const ActorView = () => {
     setActorList(actors);
   }, []);
 
+  useEffect(() => {
+    if (actorList.length > 0) {
+      setSelectedActor(actorList[0]);
+    }
+  }, [actorList]);
+
   useEffect(async () => {
     if (selectedActor) {
       const { data } = await axios.get(`/api/actor/${selectedActor.id}`);
