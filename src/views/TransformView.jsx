@@ -132,7 +132,7 @@ const TransformView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item classes={sectionClassName}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Grid container direction="column" alignItems="center" spacing={5}>
             <Grid item>
