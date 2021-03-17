@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@material-ui/core';
 import { deepPurple } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import axios from 'axios';
 
 import { Link } from 'react-router-dom';
@@ -15,15 +16,15 @@ import DefaultCertLogo from '../img/certificate.svg';
 const useStyles = makeStyles(theme => ({
   main: {
     margin: '12px 0',
-    maxWidth: '100%',
+    width: '100%',
   },
   section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
   },
   paper: {
-    width: 310,
     padding: theme.spacing(2),
     overflow: 'scroll',
   },
@@ -102,6 +103,9 @@ const varietyStrings = {
 const ActorView = () => {
   const classes = useStyles();
 
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
+
   const [actorList, setActorList] = useState([]);
   const [selectedActorIndex, setSelectedActorIndex] = useState(0);
   const [selectedActor, setSelectedActor] = useState();
@@ -130,8 +134,8 @@ const ActorView = () => {
   };
 
   return (
-    <Grid container spacing={3} className={classes.main} direction="column">
-      <Grid item className={classes.section}>
+    <Grid container spacing={3} className={classes.main} direction="column" alignItems="center">
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Seleccionar actor
@@ -154,7 +158,7 @@ const ActorView = () => {
         </Paper>
       </Grid>
       {selectedActor && (
-        <Grid item className={classes.section}>
+        <Grid item className={sectionClassName}>
           <Paper className={classes.paper}>
             <Grid container direction="column" alignItems="center" justify="space-around" spacing={3}>
               <Grid item container direction="column" alignItems="center">
@@ -208,7 +212,7 @@ const ActorView = () => {
           </Paper>
         </Grid>
       )}
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Inventorio (custodia)
@@ -216,7 +220,7 @@ const ActorView = () => {
           <InventoryTable inventory={inventory} />
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Inventorio (propiedad)

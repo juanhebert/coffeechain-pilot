@@ -18,18 +18,24 @@ import { makeStyles } from '@material-ui/core/styles';
 import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useLogin } from '../LoginContext';
 import ProductInput from '../components/ProductInput';
 
 const useStyles = makeStyles(theme => ({
   main: {
-    marginTop: '12px 0',
+    margin: '12px 0',
     maxWidth: '100%',
   },
+  section: {
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
+  },
   paper: {
-    maxWidth: 310,
-    padding: theme.spacing(4),
+    padding: theme.spacing(2),
   },
   heading: {
     marginBottom: 25,
@@ -37,18 +43,20 @@ const useStyles = makeStyles(theme => ({
   dropdown: {
     width: 250,
   },
-  section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
+  field: {
+    width: 250,
   },
-  fsAligned: {
-    alignSelf: 'flex-start',
+  fieldDesktop: {
+    width: 350,
   },
 }));
 
 const ShipView = () => {
   const classes = useStyles();
+
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
+  const fieldClassName = geqDesktopBreakpoint ? classes.fieldDesktop : classes.field;
 
   const [actorList, setActorList] = useState([]);
   const [recipientIndex, setRecipientIndex] = useState(0);
@@ -137,7 +145,7 @@ const ShipView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Grid container direction="column" spacing={5}>
             <Grid item>
@@ -151,8 +159,8 @@ const ShipView = () => {
                   Información básica
                 </Typography>
               </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
+              <Grid item>
+                <FormControl variant="outlined" className={fieldClassName}>
                   <InputLabel id="recipient-select-label">Destinatario</InputLabel>
                   <Select
                     label="Destinatario"
@@ -160,7 +168,6 @@ const ShipView = () => {
                     id="recipient-select"
                     value={recipientIndex}
                     onChange={handleRecipientChange}
-                    className={classes.dropdown}
                   >
                     {actorList.map(({ id, name: actorName }, index) => (
                       <MenuItem value={index} key={id}>
@@ -170,11 +177,11 @@ const ShipView = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item className={classes.fsAligned}>
+              <Grid item>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
                   <DateTimePicker
                     format="d MMMM yyyy 'a' 'las' hh:mm a"
-                    className={classes.dropdown}
+                    className={fieldClassName}
                     variant="inline"
                     inputVariant="outlined"
                     label="Fecha"
@@ -188,7 +195,12 @@ const ShipView = () => {
               <Typography variant="h6" className={classes.heading}>
                 Productos a enviar
               </Typography>
-              <ProductInput products={inputs} setProducts={setInputs} setPartialField={setPartial} />
+              <ProductInput
+                inputClassName={fieldClassName}
+                products={inputs}
+                setProducts={setInputs}
+                setPartialField={setPartial}
+              />
             </Grid>
             <Grid item>
               <Button disabled={partial || inputs.length === 0} variant="contained" color="primary" onClick={onSubmit}>

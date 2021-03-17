@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useLogin } from '../LoginContext';
 
@@ -27,32 +28,37 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
   },
   paper: {
-    maxWidth: 310,
-    padding: theme.spacing(4),
+    padding: theme.spacing(2),
   },
   section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
   },
   heading: {
     marginBottom: 25,
   },
-  dropdown: {
+  field: {
     width: 250,
   },
-  fsAligned: {
-    alignSelf: 'flex-start',
+  fieldDesktop: {
+    width: 350,
   },
 }));
 
 const certifications = [
   { id: 'UTZ', name: 'UTZ Cerfified' },
   { id: 'FLO', name: 'Fair Trade/Comercio Justo' },
+  { id: '4C', name: '4C' },
 ];
 
 const CertifyView = () => {
   const classes = useStyles();
+
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
+  const fieldClassName = geqDesktopBreakpoint ? classes.fieldDesktop : classes.field;
 
   const [actorList, setActorList] = useState([]);
   const [receiverIndex, setReceiverIndex] = useState(0);
@@ -148,9 +154,9 @@ const CertifyView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
-          <Grid container direction="column" spacing={5}>
+          <Grid container direction="column" alignItems="center" spacing={5}>
             <Grid item>
               <Typography variant="h5" className={classes.heading}>
                 Registrar certificado
@@ -162,8 +168,8 @@ const CertifyView = () => {
                   Información básica
                 </Typography>
               </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
+              <Grid item>
+                <FormControl variant="outlined" className={fieldClassName}>
                   <InputLabel id="receiver-select-label">Destinatario</InputLabel>
                   <Select
                     label="Destinatario"
@@ -171,7 +177,6 @@ const CertifyView = () => {
                     id="receiver-select"
                     value={receiverIndex}
                     onChange={handleReceiverChange}
-                    className={classes.dropdown}
                   >
                     {actorList.map(({ id, name: actorName }, index) => (
                       <MenuItem value={index} key={id}>
@@ -181,8 +186,8 @@ const CertifyView = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl variant="outlined" className={classes.dropdown}>
+              <Grid item>
+                <FormControl variant="outlined" className={fieldClassName}>
                   <InputLabel id="certificate-select-label">Tipo de certificado</InputLabel>
                   <Select
                     label="Tipo de certificado"
@@ -190,7 +195,6 @@ const CertifyView = () => {
                     id="certificate-select"
                     value={certificateIndex}
                     onChange={handleCertificateChange}
-                    className={classes.dropdown}
                   >
                     {certifications.map(({ id, name: certificationName }, index) => (
                       <MenuItem value={index} key={id}>
@@ -200,11 +204,11 @@ const CertifyView = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item className={classes.fsAligned}>
+              <Grid item>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
                   <DatePicker
                     format="d MMMM yyyy"
-                    className={classes.dropdown}
+                    className={fieldClassName}
                     variant="inline"
                     inputVariant="outlined"
                     label="Desde"
@@ -213,11 +217,11 @@ const CertifyView = () => {
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
-              <Grid item className={classes.fsAligned}>
+              <Grid item>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
                   <DatePicker
                     format="d MMMM yyyy"
-                    className={classes.dropdown}
+                    className={fieldClassName}
                     variant="inline"
                     inputVariant="outlined"
                     label="Hasta"

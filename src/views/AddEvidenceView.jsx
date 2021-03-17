@@ -19,6 +19,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 import axios from 'axios';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useLogin } from '../LoginContext';
 
@@ -28,25 +29,22 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
   },
   section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
   },
   paper: {
-    width: 310,
-    padding: theme.spacing(4),
+    padding: theme.spacing(2),
   },
   heading: {
     marginBottom: 25,
   },
-  dropdown: {
-    maxWidth: 250,
+  field: {
+    width: 250,
   },
-  fsAligned: {
-    alignSelf: 'center',
-  },
-  textField: {
-    maxWidth: 250,
+  fieldDesktop: {
+    width: 350,
   },
   input: {
     display: 'none',
@@ -61,6 +59,10 @@ const formDataOpts = {
 
 const AddEvidenceView = () => {
   const classes = useStyles();
+
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
+  const fieldClassName = geqDesktopBreakpoint ? classes.fieldDesktop : classes.field;
 
   const { eventId, eventType } = useParams();
 
@@ -150,9 +152,9 @@ const AddEvidenceView = () => {
           </Alert>
         </Collapse>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
-          <Grid container direction="column" spacing={5}>
+          <Grid container direction="column" alignItems="center" spacing={5}>
             <Grid item>
               <Typography variant="h5" className={classes.heading}>
                 Registrar evidencia
@@ -164,52 +166,54 @@ const AddEvidenceView = () => {
                   Información básica
                 </Typography>
               </Grid>
-              <Grid item className={classes.fsAligned}>
+              <Grid item>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
                   <DatePicker
                     format="d MMMM yyyy"
-                    className={classes.dropdown}
                     variant="inline"
                     inputVariant="outlined"
                     label="Fecha"
                     value={date}
                     onChange={setDate}
+                    className={fieldClassName}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
-              <Grid item className={classes.fsAligned}>
+              <Grid item>
                 <TextField
                   variant="outlined"
                   label="Título"
                   value={title}
                   onChange={event => setTitle(event.target.value)}
+                  className={fieldClassName}
                 />
               </Grid>
-              <Grid item className={classes.fsAligned}>
+              <Grid item>
                 <TextField
                   label={isFile ? 'Descripción' : 'Contenido'}
                   id="attachmentText"
                   variant="outlined"
                   multiline
                   rows={7}
-                  className={classes.textField}
                   value={content}
                   onChange={handleContentChange}
+                  className={fieldClassName}
                 />
               </Grid>
-              <Grid item className={classes.fsAligned}>
-                <FormControl className={classes.formControl}>
+              <Grid item>
+                <FormControl>
                   <FormControlLabel
                     control={<Checkbox checked={isFile} onChange={() => setIsFile(x => !x)} name="isDocument" />}
                     label="Este adjunto es un archivo"
+                    className={fieldClassName}
                   />
                 </FormControl>
               </Grid>
               {isFile && (
-                <Grid item className={classes.fsAligned}>
-                  <FormControl className={classes.formControl}>
-                    <label className={classes.label} htmlFor="upload-file-btn">
-                      <Button variant="contained" component="span" color="secondary" className={classes.button}>
+                <Grid item>
+                  <FormControl className={fieldClassName}>
+                    <label htmlFor="upload-file-btn">
+                      <Button variant="contained" component="span" color="secondary">
                         Seleccionar archivo
                       </Button>
                       <input id="upload-file-btn" className={classes.input} type="file" onChange={onChange} />

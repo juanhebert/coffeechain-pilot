@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   table: {
-    maxWidth: '310px',
+    maxWidth: '100%',
   },
   tableHeadCell: {
     fontWeight: 700,

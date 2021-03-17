@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {
   Avatar,
@@ -36,17 +37,17 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
-    width: 310,
     overflow: 'scroll',
   },
   section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
   },
   modalPaper: {
     padding: theme.spacing(2),
-    width: 310,
+    width: 300,
     margin: '100px auto',
     whiteSpace: 'pre-wrap',
   },
@@ -58,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     width: '80%',
   },
   table: {
-    minWidth: 0, // TODO
+    width: '100%',
     marginBottom: 30,
   },
   tableHeadCell: {
@@ -195,6 +196,9 @@ const EvidenceTable = ({ items, handleSeeText }) => {
 const EventView = () => {
   const classes = useStyles();
 
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
+
   const [eventData, setEventData] = useState();
   const [modalContent, setModalContent] = useState(null);
   const [modalTitle, setModalTitle] = useState('');
@@ -236,15 +240,15 @@ const EventView = () => {
   } = basicInfo;
 
   return (
-    <div className={classes.main}>
+    <>
       <Modal open={!!modalContent} onClose={() => setModalContent(null)}>
         <Paper className={classes.modalPaper}>
           <h3>{modalTitle}</h3>
           {modalContent}
         </Paper>
       </Modal>
-      <Grid container spacing={2} direction="column" alignItems="center">
-        <Grid item className={classes.section}>
+      <Grid container className={classes.main} spacing={3} direction="column" alignItems="center">
+        <Grid item className={sectionClassName}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Información básica
@@ -275,7 +279,7 @@ const EventView = () => {
           </Paper>
         </Grid>
         {inputs && (
-          <Grid item className={classes.section}>
+          <Grid item className={sectionClassName}>
             <Paper className={classes.paper}>
               <Typography variant="h5" className={classes.heading}>
                 Entradas
@@ -285,7 +289,7 @@ const EventView = () => {
           </Grid>
         )}
         {outputs && (
-          <Grid item className={classes.section}>
+          <Grid item className={sectionClassName}>
             <Paper className={classes.paper}>
               <Typography variant="h5" className={classes.heading}>
                 Salidas
@@ -294,7 +298,7 @@ const EventView = () => {
             </Paper>
           </Grid>
         )}
-        <Grid item className={classes.section}>
+        <Grid item className={sectionClassName}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Evidencia
@@ -308,7 +312,7 @@ const EventView = () => {
           </Paper>
         </Grid>
       </Grid>
-    </div>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart } from 'recharts';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {
   Avatar,
@@ -30,15 +31,15 @@ import DefaultCertLogo from '../img/certificate.svg';
 const useStyles = makeStyles(theme => ({
   main: {
     margin: '12px 0',
+    maxWidth: '100%',
   },
   paper: {
     padding: theme.spacing(2),
-    maxWidth: 310,
     overflow: 'scroll',
   },
   modalPaper: {
     padding: theme.spacing(2),
-    width: 450,
+    width: 300,
     margin: '100px auto',
     whiteSpace: 'pre-wrap',
   },
@@ -60,9 +61,10 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
   },
   section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
   },
 }));
 
@@ -241,6 +243,9 @@ const pieColors = ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d
 const ProductView = () => {
   const classes = useStyles();
 
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
+
   const [productData, setProductData] = useState();
 
   const { productId } = useParams();
@@ -278,8 +283,8 @@ const ProductView = () => {
   }));
 
   return (
-    <Grid container spacing={2} direction="column" alignItems="center" className={classes.main}>
-      <Grid item className={classes.section}>
+    <Grid container spacing={3} direction="column" alignItems="center" className={classes.main}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Información básica
@@ -294,7 +299,7 @@ const ProductView = () => {
           </List>
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Proveniencia
@@ -305,7 +310,7 @@ const ProductView = () => {
           />
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Custodia
@@ -313,12 +318,12 @@ const ProductView = () => {
           <CustodyTable items={custody} />
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Composición
           </Typography>
-          <PieChart width={300} height={300} className={classes.pie}>
+          <PieChart width={280} height={280} className={classes.pie}>
             <Pie data={varietyPieData} nameKey="name" dataKey="value" cx="50%" cy="50%" fill="#8884d8" label>
               {varietyPieData.map(({ name }, i) => (
                 <Cell key={`cell-${name}`} fill={pieColors[i % pieColors.length]} />
@@ -328,7 +333,7 @@ const ProductView = () => {
           </PieChart>
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Caficultores
@@ -336,7 +341,7 @@ const ProductView = () => {
           <ProducerTable items={farmerInfo} />
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Certificados
@@ -344,7 +349,7 @@ const ProductView = () => {
           <PracticeTable isCert items={certificateItems} />
         </Paper>
       </Grid>
-      <Grid item className={classes.section}>
+      <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.heading}>
             Practicas de sostenibilidad

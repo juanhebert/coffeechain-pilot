@@ -25,9 +25,6 @@ const useStyles = makeStyles(theme => ({
     minWidth: 25,
     marginLeft: 12,
   },
-  input: {
-    width: 250,
-  },
   list: {
     width: 250,
   },
@@ -36,6 +33,9 @@ const useStyles = makeStyles(theme => ({
     width: 300,
     margin: '100px auto',
     whiteSpace: 'pre-wrap',
+  },
+  buttonGroup: {
+    marginTop: 12,
   },
 }));
 
@@ -74,7 +74,13 @@ const strings = {
   CATIMORO: 'Catimoro',
 };
 
-const ProductInput = ({ products, setProducts, setPartialField = () => {}, weightAndVariety = false }) => {
+const ProductInput = ({
+  products,
+  setProducts,
+  setPartialField = () => {},
+  weightAndVariety = false,
+  inputClassName,
+}) => {
   const classes = useStyles();
 
   const [currentProduct, setCurrentProduct] = useState('');
@@ -156,7 +162,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
           <TextField
             variant="outlined"
             label="ID del producto"
-            className={classes.input}
+            className={inputClassName}
             value={currentProduct}
             onChange={handleProductChange}
             onKeyPress={handleKeyPress}
@@ -165,7 +171,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
         {weightAndVariety && (
           <>
             <Grid item>
-              <FormControl className={classes.input} variant="outlined">
+              <FormControl className={inputClassName} variant="outlined">
                 <InputLabel id="type-select-label">Tipo</InputLabel>
                 <Select
                   label="Tipo"
@@ -173,7 +179,6 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                   id="type-select"
                   value={typeIndex}
                   onChange={handleTypeChange}
-                  className={classes.input}
                 >
                   {types.map(({ id, name: typeName }, index) => (
                     <MenuItem value={index} key={id}>
@@ -184,7 +189,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
               </FormControl>
             </Grid>
             <Grid item>
-              <FormControl className={classes.input} variant="outlined">
+              <FormControl className={inputClassName} variant="outlined">
                 <InputLabel id="variety-select-label">Variedad</InputLabel>
                 <Select
                   label="Variedad"
@@ -192,7 +197,6 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                   id="variety-select"
                   value={varietyIndex}
                   onChange={handleVarietyChange}
-                  className={classes.input}
                 >
                   {varieties.map(({ id, name: varietyName }, index) => (
                     <MenuItem value={index} key={id}>
@@ -207,7 +211,7 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
                 variant="outlined"
                 label="Peso (kg)"
                 value={currentWeight}
-                className={classes.input}
+                className={inputClassName}
                 onChange={event => setCurrentWeight(event.target.value)}
                 onKeyPress={handleKeyPress}
               />
@@ -216,7 +220,12 @@ const ProductInput = ({ products, setProducts, setPartialField = () => {}, weigh
         )}
         <Grid item container justify="center">
           <Grid item>
-            <ButtonGroup color="secondary" variant="contained" aria-label="outlined primary button group">
+            <ButtonGroup
+              color="secondary"
+              className={classes.buttonGroup}
+              variant="contained"
+              aria-label="outlined primary button group"
+            >
               <Button onClick={handleAdd}>Añadir</Button>
               <Button onClick={() => setModalOpen(true)}>Escanear QR</Button>
             </ButtonGroup>

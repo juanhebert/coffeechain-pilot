@@ -17,6 +17,7 @@ import { Alert } from '@material-ui/lab';
 import { Close } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useLogin } from '../LoginContext';
 
@@ -25,15 +26,15 @@ const useStyles = makeStyles(theme => ({
     margin: '12px 0',
     maxWidth: '100%',
   },
+  section: {
+    width: 320,
+  },
+  sectionDesktop: {
+    width: 600,
+  },
   paper: {
     padding: theme.spacing(2),
-    width: 310,
     overflow: 'scroll',
-  },
-  section: {
-    display: 'flex',
-    justifyContent: 'center',
-    maxWidth: '100%',
   },
   heading: {
     marginBottom: 25,
@@ -89,6 +90,9 @@ const PendingTable = ({ items, showSaleFields, handleSaleConfirmation, handleShi
 
 const PendingView = () => {
   const classes = useStyles();
+
+  const geqDesktopBreakpoint = useMediaQuery('(min-width: 600px)');
+  const sectionClassName = geqDesktopBreakpoint ? classes.sectionDesktop : classes.section;
 
   const [pendingData, setPendingData] = useState({});
   const [login] = useLogin();
@@ -191,7 +195,7 @@ const PendingView = () => {
             </Alert>
           </Collapse>
         </Grid>
-        <Grid item className={classes.section}>
+        <Grid item className={sectionClassName}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Ventas pendientes
@@ -199,7 +203,7 @@ const PendingView = () => {
             <PendingTable items={pendingSales} showSaleFields handleSaleConfirmation={handleSaleConfirmation} />
           </Paper>
         </Grid>
-        <Grid item className={classes.section}>
+        <Grid item className={sectionClassName}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.heading}>
               Envíos pendientes
