@@ -324,8 +324,6 @@ const ProductView = () => {
     percentage: percentage * 100,
   }));
 
-  console.log(varietyPieData);
-
   return (
     <Grid container spacing={3} direction="column" alignItems="center" className={classes.main}>
       <Grid item className={sectionClassName}>

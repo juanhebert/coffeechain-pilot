@@ -81,6 +81,7 @@ const Navbar = () => {
     setSelectedActorIndex(index);
     setLogin(actorList[index]);
     setAnchorElement(null);
+    history.push('/');
   };
 
   const handlePagesMenuClick = event => setPageMenuAnchorElement(event.currentTarget);

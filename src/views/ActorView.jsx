@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import { Link } from 'react-router-dom';
 import InventoryTable from '../components/InventoryTable';
+import { useLogin } from '../LoginContext';
 
 import UtzLogo from '../img/utz-certified-logo.svg';
 import FloLogo from '../img/flocert-logo.svg';
@@ -112,6 +113,9 @@ const ActorView = () => {
   const [selectedActorIndex, setSelectedActorIndex] = useState(0);
   const [selectedActor, setSelectedActor] = useState();
   const [actorInfo, setActorInfo] = useState();
+  const [login] = useLogin();
+
+  const { id: loginId } = login;
 
   useEffect(async () => {
     const { data } = await axios.get('/api/actor');
@@ -121,9 +125,11 @@ const ActorView = () => {
 
   useEffect(() => {
     if (actorList.length > 0) {
-      setSelectedActor(actorList[0]);
+      const index = actorList.findIndex(({ id }) => id === loginId);
+      setSelectedActorIndex(index);
+      setSelectedActor(actorList[index]);
     }
-  }, [actorList]);
+  }, [actorList, login]);
 
   useEffect(async () => {
     if (selectedActor) {
