@@ -29,10 +29,12 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
   },
   section: {
-    width: 320,
+    width: '95%',
+    minWidth: 320,
   },
   sectionDesktop: {
-    width: 600,
+    width: '95%',
+    maxWidth: 750,
   },
   paper: {
     padding: theme.spacing(2),

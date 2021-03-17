@@ -24,10 +24,12 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 25,
   },
   section: {
-    width: 250,
+    width: '95%',
+    minWidth: 320,
   },
   sectionDesktop: {
-    width: 600,
+    width: '95%',
+    maxWidth: 750,
   },
   field: {
     width: 250,

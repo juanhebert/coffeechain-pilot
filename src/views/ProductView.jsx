@@ -61,10 +61,12 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
   },
   section: {
-    width: 320,
+    width: '95%',
+    minWidth: 320,
   },
   sectionDesktop: {
-    width: 600,
+    width: '95%',
+    maxWidth: 750,
   },
 }));
 
