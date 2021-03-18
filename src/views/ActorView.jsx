@@ -129,6 +129,11 @@ const ActorView = () => {
       <Grid item className={sectionClassName}>
         <Paper className={classes.paper}>
           <Grid container direction="column" alignItems="center" justify="space-around" spacing={3}>
+            <Grid item>
+              <Typography variant="h5" className={classes.heading}>
+                Perfil
+              </Typography>
+            </Grid>
             <Grid item container direction="column" alignItems="center">
               <Avatar className={classes.avatar}>{name[0]}</Avatar>
               <h3>{name}</h3>
