@@ -70,6 +70,14 @@ const ShipView = () => {
   const [login] = useLogin();
   const [partial, setPartial] = useState(false);
 
+  useEffect(async () => {
+    const { data } = await axios.get('/api/actor');
+    const { actors } = data;
+    setActorList(actors);
+  }, []);
+
+  if (!login) return null;
+
   const { id: sender } = login;
 
   const handleRecipientChange = event => {
@@ -98,12 +106,6 @@ const ShipView = () => {
         setShowError(true);
       });
   };
-
-  useEffect(async () => {
-    const { data } = await axios.get('/api/actor');
-    const { actors } = data;
-    setActorList(actors);
-  }, []);
 
   return (
     <Grid container className={classes.main} direction="column" alignItems="center" spacing={3}>

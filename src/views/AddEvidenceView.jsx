@@ -78,6 +78,8 @@ const AddEvidenceView = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [login] = useLogin();
 
+  if (!login) return null;
+
   const { id: emitter } = login;
 
   const onChange = event => setFile(event.currentTarget.files[0]);

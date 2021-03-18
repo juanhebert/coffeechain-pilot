@@ -72,6 +72,14 @@ const CertifyView = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [login] = useLogin();
 
+  useEffect(async () => {
+    const { data } = await axios.get('/api/actor');
+    const { actors } = data;
+    setActorList(actors);
+  }, []);
+
+  if (!login) return null;
+
   const { id: emitter } = login;
 
   const handleReceiverChange = event => {
@@ -107,12 +115,6 @@ const CertifyView = () => {
         setShowError(true);
       });
   };
-
-  useEffect(async () => {
-    const { data } = await axios.get('/api/actor');
-    const { actors } = data;
-    setActorList(actors);
-  }, []);
 
   return (
     <Grid container className={classes.main} direction="column" alignItems="center" spacing={3}>

@@ -80,6 +80,14 @@ const SellView = () => {
   const [login] = useLogin();
   const [partial, setPartial] = useState(false);
 
+  useEffect(async () => {
+    const { data } = await axios.get('/api/actor');
+    const { actors } = data;
+    setActorList(actors);
+  }, []);
+
+  if (!login) return null;
+
   const { id: seller } = login;
 
   const handleBuyerChange = event => {
@@ -115,12 +123,6 @@ const SellView = () => {
         setShowError(true);
       });
   };
-
-  useEffect(async () => {
-    const { data } = await axios.get('/api/actor');
-    const { actors } = data;
-    setActorList(actors);
-  }, []);
 
   return (
     <Grid container className={classes.main} direction="column" alignItems="center" spacing={3}>

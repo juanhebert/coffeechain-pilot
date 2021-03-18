@@ -56,6 +56,8 @@ const TransformView = () => {
   const [partialIn, setPartialIn] = useState(false);
   const [partialOut, setPartialOut] = useState(false);
 
+  if (!login) return null;
+
   const { id: emitter, info } = login;
   const { varieties = [] } = info || {};
 

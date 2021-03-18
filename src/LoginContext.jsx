@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 const LoginContext = createContext();
 
 const LoginContextProvider = ({ children }) => {
-  const state = useState({});
+  const state = useState();
   return <LoginContext.Provider value={state}>{children}</LoginContext.Provider>;
 };
 

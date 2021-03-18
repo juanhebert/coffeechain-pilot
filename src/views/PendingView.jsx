@@ -103,14 +103,16 @@ const PendingView = () => {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { id } = login;
-
   useEffect(async () => {
-    if (id) {
-      const { data } = await axios.get(`/api/pending/${id}`);
+    if (login) {
+      const { data } = await axios.get(`/api/pending/${login.id}`);
       setPendingData(data);
     }
-  }, [id]);
+  }, [login]);
+
+  if (!login) return null;
+
+  const { id } = login;
 
   const handleSaleConfirmation = sale => () => {
     setShowSuccess(false);
