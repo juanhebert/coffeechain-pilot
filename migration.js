@@ -73,7 +73,7 @@ const actors = [
     practices: ['CM', 'PH', 'CC', 'AB', 'ST'],
   },
   {
-    name: 'Dúver Alexander Bedoya',
+    name: 'Duber Alexander Bedoya',
     location: 'Heliconia, Antioquia, Colombia',
     pluscode: '67M3+FM',
     type: 'FARMER',
