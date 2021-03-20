@@ -22,6 +22,7 @@ const getString = id => {
     DRY_PARCHMENT: 'Pergamino seco',
     GREEN: 'Café verde',
     ROASTED: 'Café tostado',
+    WEIGHT_LOSS: 'Pérdidas',
     CENICAFE: 'Cenicafé uno',
     CASTILLO: 'Castillo',
     CATURRA: 'Caturra',
