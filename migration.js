@@ -75,7 +75,7 @@ const actors = [
   {
     name: 'Dúver Alexander Bedoya',
     location: 'Heliconia, Antioquia, Colombia',
-    pluscode: '6748+PM',
+    pluscode: '67M3+FM',
     type: 'FARMER',
     info: {
       area: 6,
