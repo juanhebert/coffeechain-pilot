@@ -18,7 +18,7 @@ const actors = [
   {
     name: 'Carlos Mauricio Correa Gutiérrez',
     location: 'Heliconia, Antioquia, Colombia',
-    pluscode: '6748+PM',
+    pluscode: '6749+GV',
     type: 'FARMER',
     info: {
       area: 2,
