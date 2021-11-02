@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-const bodyParser = require('body-parser');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const path = require('path');
@@ -53,7 +52,7 @@ const cn = {
 const db = pgp(cn);
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(fileUpload());
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 app.use('/img', express.static(path.join(__dirname, '..', 'img')));
