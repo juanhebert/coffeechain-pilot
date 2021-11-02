@@ -15,11 +15,6 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "date-fns": "^2.16.1",
-    "eslint": "^7.15.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^7.0.0",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "^3.2.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "fontsource-roboto": "^4.0.0",
@@ -27,7 +22,6 @@
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
     "pg-promise": "^10.8.1",
-    "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-qr-reader": "^2.2.1",
@@ -63,5 +57,16 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.4.1"
   }
 }
