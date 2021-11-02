@@ -56,12 +56,6 @@ app.use(express.json());
 app.use(fileUpload());
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 app.use('/img', express.static(path.join(__dirname, '..', 'img')));
-app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && !req.secure) {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  return next();
-});
 
 app.get('/api', (req, res) => {
   res.send('OK');
