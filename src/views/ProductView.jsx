@@ -202,7 +202,7 @@ const ProducerTable = ({ items }) => {
               {name}
             </TableCell>
             <TableCell>{`${(contribution * 100).toFixed(2)}%`}</TableCell>
-            <TableCell>{`${currency} ${amount.toFixed(2)}`}</TableCell>
+            <TableCell>{`${currency / 100} ${amount.toFixed(2)}`}</TableCell>
             <TableCell>{location}</TableCell>
           </TableRow>
         ))}
