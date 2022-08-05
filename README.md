@@ -1,4 +1,4 @@
-# Coffeechain
+# GoodCoffee
 
 ## Setting up PostgreSQL
 
